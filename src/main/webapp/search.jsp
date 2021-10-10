@@ -13,7 +13,7 @@
         <input class="form-control" name="title" placeholder="title">
         <input class="form-control" name="authors" placeholder="author(-s)">
         <input class="form-control" name="genres" placeholder="genre(-s)">
-        <input class="form-control" name="description" placeholder="title">
+        <input class="form-control" name="description" placeholder="description">
         <input class="btn btn-secondary" type="submit" value="search">
     </form>
     <c:if test="${not empty requestScope.books}">

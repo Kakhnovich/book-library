@@ -1,11 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:if test="${sessionScope.locale==null}">
-    <c:set var="locale" value="en" scope="session"/>
-</c:if>
-<fmt:setLocale value="${sessionScope.locale}"/>
-<fmt:setBundle basename="messages"/>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -16,14 +10,14 @@
     <div class="container-fluid">
         <div class="collapse navbar-collapse">
             <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                <c:if test="${command!='default'}">
+                <c:if test="${command!='default' && command!='update_book'}">
                     <div class="nav-item"><a class="nav-link"
                                              href=${pageContext.request.contextPath}/controller?command=main>Main
                         Page</a></div>
                 </c:if>
 
-                <%--    <c:if test="${command!='borrow'}">--%>
-                <%--        <div class="nav-item"><a class="nav-link" href=${pageContext.request.contextPath}/controller?command=borrow>Borrow Page</a></div>--%>
+                <%--    <c:if test="${command!='borrows'}">--%>
+                <%--        <div class="nav-item"><a class="nav-link" href=${pageContext.request.contextPath}/controller?command=borrows>Borrows Page</a></div>--%>
                 <%--    </c:if>--%>
 
                 <c:if test="${command!='readers'}">

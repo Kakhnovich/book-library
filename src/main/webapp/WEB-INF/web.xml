@@ -4,12 +4,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         version="4.0">
-    <jsp-config>
-        <taglib>
-            <taglib-uri>custom-tags</taglib-uri>
-            <taglib-location>/WEB-INF/tld/custom.tld</taglib-location>
-        </taglib>
-    </jsp-config>
 
     <session-config>
         <session-timeout>10</session-timeout>
@@ -20,8 +14,8 @@
         <location>/notFound.jsp</location>
     </error-page>
 
-    <error-page>
-        <exception-type>java.lang.Throwable</exception-type>
-        <location>/errorPage.jsp</location>
-    </error-page>
+    <!--    <error-page>-->
+    <!--        <exception-type>java.lang.Throwable</exception-type>-->
+    <!--        <location>/errorPage.jsp</location>-->
+    <!--    </error-page>-->
 </web-app>

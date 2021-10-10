@@ -10,6 +10,7 @@
 <jsp:include page="commands.jsp"/>
 <div class="container py-4">
     <jsp:include page="bookList.jsp"/>
+    <a href="${pageContext.request.contextPath}/controller?command=book">Add</a>
 </div>
 </body>
 </html>

@@ -10,8 +10,7 @@ create table book
     publishDate date not null,
     pageCount int not null,
     description varchar(150) not null,
-    totalAmount int not null,
-    statusId int not null
+    totalAmount int not null
 );
 
 create unique index book_isbn_uindex
@@ -37,19 +36,6 @@ create table borrow_record
     constraint borrow_record_pk
         primary key (id)
 );
-
-create table book_status
-(
-    id int auto_increment,
-    status varchar(15) not null,
-    constraint book_status_pk
-        primary key (id)
-);
-
-create unique index book_status_status_uindex
-    on book_status (status);
-
-insert into book_status(status) values ('Unavailable'),('Available');
 
 create table borrow_status
 (
@@ -77,17 +63,13 @@ create unique index borrow_period_months_uindex
 
 insert into borrow_period(months) values (1),(2),(3),(6),(12);
 
-alter table book
-    add constraint book_book_status_id_fk
-        foreign key (statusId) references book_status (id);
-
 alter table borrow_record
     add constraint borrow_record_borrow_status_id_fk
         foreign key (statusId) references borrow_status (id);
 
 alter table borrow_record
     add constraint borrow_record_time_period_id_fk
-        foreign key (timePeriodId) references time_period (id);
+        foreign key (timePeriodId) references borrow_period (id);
 
 alter table borrow_record
     add constraint borrow_record_book_id_fk
