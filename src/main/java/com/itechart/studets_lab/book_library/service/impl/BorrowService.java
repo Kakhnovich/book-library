@@ -55,6 +55,6 @@ public class BorrowService implements CommonService<Borrow, Integer> {
     }
 
     public Optional<List<Borrow>> findReaderBorrows(String email) {
-        return findAll().map(borrows -> borrows.stream().filter(borrow -> borrow.getEmail().equals(email)).collect(Collectors.toList()));
+        return findAll().map(borrows -> borrows.stream().filter(borrow -> borrow.getReader().getEmail().equals(email)).collect(Collectors.toList()));
     }
 }

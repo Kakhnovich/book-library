@@ -29,9 +29,9 @@ create table borrow_record
     email varchar(50) not null,
     borrowDate date not null,
     timePeriodId int not null,
-    returnDate date not null,
+    returnDate date null,
     comment varchar(150) null,
-    statusId int not null,
+    statusId int null,
     id int auto_increment,
     constraint borrow_record_pk
         primary key (id)
@@ -48,7 +48,7 @@ create table borrow_status
 create unique index borrow_status_status_uindex
     on borrow_status (status);
 
-insert into borrow_status(status) values ('returned'),('returned and damaged'), ('lost');
+insert into borrow_status(status) values ('returned'), ('returned and damaged'), ('lost'), ('not returned');
 
 create table borrow_period
 (

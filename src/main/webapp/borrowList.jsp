@@ -5,30 +5,31 @@
     <title>Borrow List</title>
 </head>
 <body>
-<div class="table-responsive">
-    <table class="table table-striped table-sm" border="2">
-        <thead>
-        <tr>
-            <th>Reader Email</th>
-            <th>Reader Name</th>
-            <th>Borrow Date</th>
-            <th>Due Date</th>
-            <th>Return Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach var="borrow" items="${requestScope.borrows}">
+<c:if test="${not empty borrows}">
+    <div class="table-responsive">
+        <table class="table table-striped table-sm" border="2">
+            <thead>
             <tr>
-                <td>#{borrow.email}</td>
-                <td></td>
-                <td>#{borrow.borrowDate}</td>
-                <td>${borrow.getDueDate()}</td>
-                <td>${borrow.returnDate}</td>
+                <th>Reader Email</th>
+                <th>Reader Name</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
             </tr>
-        </c:forEach>
-        </tbody>
-    </table>
-</div>
-<jsp:include page="pagination.jsp"/>
+            </thead>
+            <tbody>
+            <c:forEach var="borrow" items="${requestScope.borrows}">
+                <tr>
+                    <td>${borrow.reader.email}</td>
+                    <td>${borrow.reader.firstName} ${borrow.reader.lastName}</td>
+                    <td>${borrow.borrowDate}</td>
+                    <td>${borrow.borrowDate.plusMonths(borrow.duration)}</td>
+                    <td>${borrow.returnDate}</td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
+</c:if>
 </body>
 </html>

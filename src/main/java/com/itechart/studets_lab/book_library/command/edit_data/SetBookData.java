@@ -59,5 +59,6 @@ public enum SetBookData implements Command {
 
     private List<String> parseString(String data) {
         return Arrays.stream(data.trim().split(" ")).filter(word -> word.length() > 0).collect(Collectors.toList());
+        //todo validate unique data
     }
 }

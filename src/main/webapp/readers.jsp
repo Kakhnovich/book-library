@@ -22,7 +22,7 @@
             <tbody>
             <c:forEach var="reader" items="${requestScope.readers}">
                 <tr>
-                    <td>${reader.name}</td>
+                    <td>${reader.firstName} ${reader.lastName}</td>
                     <td>${reader.email}</td>
                     <td>${reader.dateOfRegistration}</td>
                     <td>${reader.phoneNumber}</td>

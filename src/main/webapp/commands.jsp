@@ -16,13 +16,9 @@
                         Page</a></div>
                 </c:if>
 
-                <%--    <c:if test="${command!='borrows'}">--%>
-                <%--        <div class="nav-item"><a class="nav-link" href=${pageContext.request.contextPath}/controller?command=borrows>Borrows Page</a></div>--%>
-                <%--    </c:if>--%>
-
                 <c:if test="${command!='readers'}">
                     <div class="nav-item"><a class="nav-link"
-                                             href=${pageContext.request.contextPath}/controller?command=readers>Readers'
+                                             href=${pageContext.request.contextPath}/controller?command=readers>Readers
                         Page</a></div>
                 </c:if>
 

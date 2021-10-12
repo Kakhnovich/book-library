@@ -42,7 +42,7 @@ public class BookDao implements CommonDao<Book, Integer> {
              final ResultSet resultSet = statement.executeQuery(FIND_ALL_BOOKS_SQL)) {
             return retrieveBooksFromSet(resultSet);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find all Books: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find all Books: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -54,7 +54,7 @@ public class BookDao implements CommonDao<Book, Integer> {
              final ResultSet resultSet = statement.executeQuery(FIND_BOOKS_FOR_PAGE_SQL + 10 * (page - 1) + ',' + 10)) {
             return retrieveBooksFromSet(resultSet);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Books by page number: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find Books by page number: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -107,7 +107,7 @@ public class BookDao implements CommonDao<Book, Integer> {
                 return Optional.of(retrieveBookData(resultSet));
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Book by ISBN: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find Book by ISBN: " + e.getLocalizedMessage());
         }
         return Optional.empty();
     }
@@ -121,7 +121,7 @@ public class BookDao implements CommonDao<Book, Integer> {
                 return (int) Math.ceil(resultSet.getInt(COUNT_COLUMN_NAME));
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to get count of Book pages: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to get count of Book pages: " + e.getLocalizedMessage());
         }
         return 0;
     }
@@ -139,7 +139,7 @@ public class BookDao implements CommonDao<Book, Integer> {
             addBookGenres(book.getIsbn(), book.getGenres());
             return Optional.of(book);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to update " + book.getIsbn() + " Book data: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to update " + book.getIsbn() + " Book data: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -154,7 +154,7 @@ public class BookDao implements CommonDao<Book, Integer> {
             addBookGenres(book.getIsbn(), book.getGenres());
             return Optional.of(book);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to create new Book: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to create new Book: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -175,7 +175,7 @@ public class BookDao implements CommonDao<Book, Integer> {
              final Statement statement = conn.createStatement()) {
             statement.executeUpdate(DELETE_BOOK_AUTHORS_SQL + isbn);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to delete " + isbn + " Book authors: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to delete " + isbn + " Book authors: " + e.getLocalizedMessage());
         }
     }
 
@@ -184,7 +184,7 @@ public class BookDao implements CommonDao<Book, Integer> {
              final Statement statement = conn.createStatement()) {
             statement.executeUpdate(DELETE_BOOK_GENRES_SQL + isbn);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to delete " + isbn + " Book genres: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to delete " + isbn + " Book genres: " + e.getLocalizedMessage());
         }
     }
 
@@ -197,7 +197,7 @@ public class BookDao implements CommonDao<Book, Integer> {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to add " + isbn + " Book authors: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to add " + isbn + " Book authors: " + e.getLocalizedMessage());
         }
     }
 
@@ -210,7 +210,7 @@ public class BookDao implements CommonDao<Book, Integer> {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to add " + isbn + " Book genres: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to add " + isbn + " Book genres: " + e.getLocalizedMessage());
         }
     }
 }

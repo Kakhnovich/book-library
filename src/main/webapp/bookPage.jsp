@@ -34,12 +34,12 @@
 
             <c:choose>
             <c:when test="${availableCount>0}">
-            <p>Available (${availableCount} out of <input required type="number" min="1" max="100"
-                                                          value="${book.totalAmount}"
-                                                          name="totalAmount">)</p>
+            <p>Available (${availableCount} out of <input required type="number"
+                                                          min="${book.totalAmount - availableCount}" max="100"
+                                                          value="${book.totalAmount}" name="totalAmount">)</p>
             </c:when>
             <c:otherwise>
-            <p>Total amount - <input required type="number" min="1" max="100"
+            <p>Total amount - <input required type="number" min="${book.totalAmount - availableCount}" max="100"
                                      value="${book.totalAmount}"
                                      name="totalAmount"></p>
             <p>Unavailable (expected to become available on ${availableDate})</p>
@@ -52,6 +52,7 @@
                 <button onclick="window.location.href='/'">Dismiss</button>
             </div>
     </form>
+    <jsp:include page="borrowList.jsp"/>
 </div>
 </body>
 </html>

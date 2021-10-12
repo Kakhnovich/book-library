@@ -6,17 +6,17 @@ import java.util.Objects;
 public class Borrow {
     private final int id;
     private final int bookId;
-    private final String email;
+    private final Reader reader;
     private final LocalDate borrowDate;
     private final int duration;
     private final LocalDate returnDate;
     private final String comment;
     private final String status;
 
-    Borrow(int id, int bookId, String email, LocalDate borrowDate, int duration, LocalDate returnDate, String comment, String status) {
+    Borrow(int id, int bookId, Reader reader, LocalDate borrowDate, int duration, LocalDate returnDate, String comment, String status) {
         this.id = id;
         this.bookId = bookId;
-        this.email = email;
+        this.reader = reader;
         this.borrowDate = borrowDate;
         this.duration = duration;
         this.returnDate = returnDate;
@@ -27,7 +27,7 @@ public class Borrow {
     static class BorrowBuilder {
         private int id;
         private int bookId;
-        private String email;
+        private Reader reader;
         private LocalDate borrowDate;
         private int duration;
         private LocalDate returnDate;
@@ -44,8 +44,8 @@ public class Borrow {
             return this;
         }
 
-        public BorrowBuilder email(String email) {
-            this.email = email;
+        public BorrowBuilder reader(Reader reader) {
+            this.reader = reader;
             return this;
         }
 
@@ -76,8 +76,9 @@ public class Borrow {
 
         public Borrow build() {
             return new Borrow(
-                    id, this.bookId,
-                    this.email,
+                    this.id,
+                    this.bookId,
+                    this.reader,
                     this.borrowDate,
                     this.duration,
                     this.returnDate,
@@ -98,8 +99,8 @@ public class Borrow {
         return bookId;
     }
 
-    public String getEmail() {
-        return email;
+    public Reader getReader() {
+        return reader;
     }
 
     public LocalDate getBorrowDate() {
@@ -127,11 +128,11 @@ public class Borrow {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Borrow borrow = (Borrow) o;
-        return bookId == borrow.bookId && duration == borrow.duration && Objects.equals(email, borrow.email) && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && Objects.equals(status, borrow.status);
+        return bookId == borrow.bookId && duration == borrow.duration && Objects.equals(reader, borrow.reader) && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && Objects.equals(status, borrow.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookId, email, borrowDate, duration, returnDate, comment, status);
+        return Objects.hash(bookId, reader, borrowDate, duration, returnDate, comment, status);
     }
 }

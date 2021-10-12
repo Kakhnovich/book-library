@@ -35,7 +35,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
              final ResultSet resultSet = statement.executeQuery(FIND_ALL_READERS_SQL)) {
             return retrieveReadersFromSet(resultSet);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find all Readers: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find all Readers: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -47,7 +47,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
              final ResultSet resultSet = statement.executeQuery(FIND_READERS_FOR_PAGE_SQL + 10 * (page - 1) + ',' + 10)) {
             return retrieveReadersFromSet(resultSet);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Readers by page number: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find Readers by page number: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -73,7 +73,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
                 return Optional.of(retrieveReaderData(resultSet));
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Reader by Email: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to find Reader by Email: " + e.getLocalizedMessage());
         }
         return Optional.empty();
     }
@@ -87,7 +87,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
                 return (int) Math.ceil(resultSet.getInt(COUNT_COLUMN_NAME));
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to get count of Reader pages: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to get count of Reader pages: " + e.getLocalizedMessage());
         }
         return 0;
     }
@@ -101,7 +101,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
             preparedStatement.executeUpdate();
             return Optional.of(reader);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to update " + reader.getEmail() + " Reader data: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to update " + reader.getEmail() + " Reader data: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
@@ -114,7 +114,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
             preparedStatement.execute();
             return Optional.of(reader);
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to create new Reader: " + e.getSQLState());
+            LOGGER.error("SQLException while trying to create new Reader: " + e.getLocalizedMessage());
             return Optional.empty();
         }
     }
