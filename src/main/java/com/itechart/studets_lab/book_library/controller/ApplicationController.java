@@ -40,6 +40,7 @@ public class ApplicationController extends HttpServlet {
         if (commandName == null) {
             commandName = DEFAULT_COMMAND_NAME;
         }
+        // TODO Почему бы сразу не получать команду из CommandManager.of(name), а не создавать статический метод в интерфейсе?
         final Command businessCommand = Command.of(commandName);
         final ResponseContext result = businessCommand.execute(WrappingRequestContext.of(req));
         req.setAttribute(COMMAND_PARAMETER_NAME, commandName.toLowerCase());
