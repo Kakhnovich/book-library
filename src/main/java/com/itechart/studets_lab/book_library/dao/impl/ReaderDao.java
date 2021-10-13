@@ -92,6 +92,7 @@ public class ReaderDao implements CommonDao<Reader, String> {
         return 0;
     }
 
+    // TODO для чего ты используешь synchronized? лучше избегать этого если в этом нет строгой необходимости, т.к. будет сказываться на производительности
     @Override
     public synchronized Optional<Reader> update(Reader reader) {
         try (final Connection conn = POOL.retrieveConnection();

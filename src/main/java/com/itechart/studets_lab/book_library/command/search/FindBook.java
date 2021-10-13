@@ -47,11 +47,16 @@ public enum FindBook implements Command {
         return ShowSearchPage.INSTANCE.execute(request);
     }
 
+    // TODO ты не проверяешь параметры на null. У тебя явно этот метод упадет, если какой то из параметров будет null
     private BookCriteria createCriteria(String title, String authors, String genres, String description) {
         BookCriteria.CriteriaBuilder bookCriteria = BookCriteria.builder();
         if (!title.equals("")) {
             bookCriteria.title(title);
         }
+        // TODO попробуй title.isEmpty()
+        // TODO а вообще рекомендую взглянуть на библиотеку org.apache.commons и в частности на org.apache.commons.lang3.StringUtils для работы со стрингами
+        // TODO например можно это все обернуть в StringUtils.isNotBlank
+        // TODO org.apache.commons вам можно использовать и там есть очень много полезного уже реализованного функционала
         if (!authors.equals("")) {
             bookCriteria.authors(parseStringIntoStringList(authors));
         }
@@ -64,6 +69,7 @@ public enum FindBook implements Command {
         return bookCriteria.build();
     }
 
+    /*TODO вместо этого метода лучше использовать уже готовое решение: Collections.singletonList(set) . Посмотри, что еще есть интересного в этом классе*/
     private List<String> parseStringIntoStringList(String set) {
         List<String> rezList = new ArrayList<>();
         for (String word : set.split(";")) {
