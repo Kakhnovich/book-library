@@ -18,19 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BorrowDao implements CommonDao<Borrow, Integer> {
+public class BorrowDao implements CommonDao<Borrow> {
     private static final Logger LOGGER = LogManager.getLogger(BorrowDao.class);
     private static final ConnectionPool POOL = ConnectionPool.getInstance();
-    private static final String FIND_ALL_BORROWS_SQL = "select borrow_record.id, bookId, email, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId";
-    private static final String FIND_BORROWS_FOR_PAGE_SQL = "select borrow_record.id, bookId, email, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId order by borrow_record.id limit ";
-    private static final String FIND_BORROW_BY_ID_SQL = "select borrow_record.id, bookId, email, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId where borrow_record.id = ";
+    private static final String FIND_ALL_BORROWS_SQL = "select borrow_record.id, bookId, readerId, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId";
+    private static final String FIND_BORROWS_FOR_PAGE_SQL = "select borrow_record.id, bookId, readerId, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId order by borrow_record.id limit ";
+    private static final String FIND_BORROW_BY_ID_SQL = "select borrow_record.id, bookId, readerId, borrowDate, months as timePeriod, returnDate, comment, status from borrow_record join borrow_period bp on bp.id = borrow_record.timePeriodId join borrow_status bs on bs.id = borrow_record.statusId where borrow_record.id = ";
+    private static final String FIND_ALL_BORROW_PERIODS_SQL = "select months from borrow_period";
+    private static final String FIND_ALL_STATUSES_PERIODS_SQL = "select status from borrow_status";
     private static final String GET_COUNT_OF_BORROWS_SQL = "select count(id) AS count from borrow_record";
-    private static final String CREATE_NEW_BORROW_SQL = "insert into borrow_record(bookId, email, borrowDate, timePeriodId, returnDate, comment, statusId) value (?,?,?,?,?,?,?)";
-    private static final String UPDATE_BORROW_DATA_SQL = "update borrow_record set bookId=?, email=?, borrowDate=?, timePeriodId=?, returnDate=?, comment=?, statusId=? where id=?";
+    private static final String CREATE_NEW_BORROW_SQL = "insert into borrow_record(bookId, readerId, borrowDate, timePeriodId, returnDate, comment, statusId) value (?,?,?,?,?,?,?)";
+    private static final String UPDATE_BORROW_DATA_SQL = "update borrow_record set bookId=?, readerId=?, borrowDate=?, timePeriodId=?, returnDate=?, comment=?, statusId=? where id=?";
     private static final String GET_BORROW_PERIOD_ID_SQL = "select id from borrow_period where months = ";
     private static final String GET_BORROW_STATUS_ID_SQL = "select id from borrow_status where status = ";
     private static final String COUNT_COLUMN_NAME = "count";
-    private static final String EMAIL_COLUMN_NAME = "email";
+    private static final String READER_ID_COLUMN_NAME = "readerID";
 
     @Override
     public Optional<List<Borrow>> findAll() {
@@ -57,7 +59,7 @@ public class BorrowDao implements CommonDao<Borrow, Integer> {
     }
 
     @Override
-    public Optional<Borrow> findByKey(Integer id) {
+    public Optional<Borrow> findByKey(int id) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(FIND_BORROW_BY_ID_SQL + id)) {
@@ -76,7 +78,7 @@ public class BorrowDao implements CommonDao<Borrow, Integer> {
     private Optional<List<Borrow>> retrieveBorrowsFromSet(ResultSet resultSet) throws SQLException {
         List<Borrow> borrows = new ArrayList<>();
         while (resultSet.next()) {
-            Optional<Reader> reader =findReader(resultSet);
+            Optional<Reader> reader = findReader(resultSet);
             if (reader.isPresent()) {
                 borrows.add(retrieveBorrowData(resultSet, reader.get()));
             }
@@ -86,7 +88,7 @@ public class BorrowDao implements CommonDao<Borrow, Integer> {
 
     private Optional<Reader> findReader(ResultSet resultSet) throws SQLException {
         ReaderDao readerDao = new ReaderDao();
-        return readerDao.findByKey(resultSet.getString(EMAIL_COLUMN_NAME));
+        return readerDao.findByKey(resultSet.getInt(READER_ID_COLUMN_NAME));
     }
 
     private Borrow retrieveBorrowData(ResultSet resultSet, Reader reader) throws SQLException {
@@ -148,21 +150,55 @@ public class BorrowDao implements CommonDao<Borrow, Integer> {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(GET_BORROW_PERIOD_ID_SQL + months)) {
-            return resultSet.getInt(1);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
         } catch (SQLException e) {
             LOGGER.error("SQLException while trying to find " + months + " months Period ID: " + e.getLocalizedMessage());
-            return 0;
         }
+        return 0;
     }
 
     private int findStatusId(String status) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(GET_BORROW_STATUS_ID_SQL + '\'' + status + '\'')) {
-            return resultSet.getInt(1);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
         } catch (SQLException e) {
             LOGGER.error("SQLException while trying to find " + status + " Status ID: " + e.getLocalizedMessage());
-            return 0;
+        }
+        return 0;
+    }
+
+    public Optional<List<Integer>> findAllPeriods(){
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement();
+             final ResultSet resultSet = statement.executeQuery(FIND_ALL_BORROW_PERIODS_SQL)) {
+            List<Integer> periods = new ArrayList<>();
+            while(resultSet.next()){
+                periods.add(resultSet.getInt(1));
+            }
+            return Optional.of(periods);
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to find all borrow time periods: " + e.getLocalizedMessage());
+            return Optional.empty();
+        }
+    }
+
+    public Optional<List<String>> findAllStatuses(){
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement();
+             final ResultSet resultSet = statement.executeQuery(FIND_ALL_STATUSES_PERIODS_SQL)) {
+            List<String> statuses = new ArrayList<>();
+            while(resultSet.next()){
+                statuses.add(resultSet.getString(1));
+            }
+            return Optional.of(statuses);
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to find all borrow time periods: " + e.getLocalizedMessage());
+            return Optional.empty();
         }
     }
 }

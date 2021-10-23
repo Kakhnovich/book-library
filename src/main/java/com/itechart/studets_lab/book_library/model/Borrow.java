@@ -135,4 +135,18 @@ public class Borrow {
     public int hashCode() {
         return Objects.hash(bookId, reader, borrowDate, duration, returnDate, comment, status);
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id: " + id +
+                ", bookId: " + bookId +
+                ", reader: " + reader.toString() +
+                ", borrowDate: " + borrowDate +
+                ", duration: " + duration +
+                ", returnDate: " + returnDate +
+                ", comment: '" + comment + '\'' +
+                ", status: '" + status + '\'' +
+                '}';
+    }
 }

@@ -7,7 +7,7 @@ import com.itechart.studets_lab.book_library.service.CommonService;
 import java.util.List;
 import java.util.Optional;
 
-public class ReaderService implements CommonService<Reader, String> {
+public class ReaderService implements CommonService<Reader> {
     private static final ReaderService INSTANCE = new ReaderService();
     private final ReaderDao readerDao;
 
@@ -30,8 +30,8 @@ public class ReaderService implements CommonService<Reader, String> {
     }
 
     @Override
-    public Optional<Reader> findByKey(String email) {
-        return readerDao.findByKey(email);
+    public Optional<Reader> findByKey(int id) {
+        return readerDao.findByKey(id);
     }
 
     @Override

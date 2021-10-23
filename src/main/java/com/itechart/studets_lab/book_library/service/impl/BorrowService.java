@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BorrowService implements CommonService<Borrow, Integer> {
+public class BorrowService implements CommonService<Borrow> {
     private static final BorrowService INSTANCE = new BorrowService();
     private final BorrowDao borrowDao;
 
@@ -31,7 +31,7 @@ public class BorrowService implements CommonService<Borrow, Integer> {
     }
 
     @Override
-    public Optional<Borrow> findByKey(Integer id) {
+    public Optional<Borrow> findByKey(int id) {
         return borrowDao.findByKey(id);
     }
 
@@ -50,11 +50,19 @@ public class BorrowService implements CommonService<Borrow, Integer> {
         return borrowDao.getCountOfPages();
     }
 
-    public Optional<List<Borrow>> findBorrowsOfBook(int isbn) {
-        return findAll().map(borrows -> borrows.stream().filter(borrow -> borrow.getBookId() == isbn).collect(Collectors.toList()));
+    public Optional<List<Borrow>> findBorrowsOfBook(int id) {
+        return findAll().map(borrows -> borrows.stream().filter(borrow -> borrow.getBookId() == id).collect(Collectors.toList()));
     }
 
     public Optional<List<Borrow>> findReaderBorrows(String email) {
         return findAll().map(borrows -> borrows.stream().filter(borrow -> borrow.getReader().getEmail().equals(email)).collect(Collectors.toList()));
+    }
+
+    public Optional<List<Integer>> findAllPeriods(){
+        return borrowDao.findAllPeriods();
+    }
+
+    public Optional<List<String>> findAllStatuses(){
+        return borrowDao.findAllStatuses();
     }
 }

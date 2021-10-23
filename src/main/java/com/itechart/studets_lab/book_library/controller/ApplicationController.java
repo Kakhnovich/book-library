@@ -2,6 +2,7 @@ package com.itechart.studets_lab.book_library.controller;
 
 
 import com.itechart.studets_lab.book_library.command.Command;
+import com.itechart.studets_lab.book_library.command.CommandManager;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.WrappingRequestContext;
 
@@ -40,8 +41,7 @@ public class ApplicationController extends HttpServlet {
         if (commandName == null) {
             commandName = DEFAULT_COMMAND_NAME;
         }
-        final Command businessCommand = Command.of(commandName);
-        final ResponseContext result = businessCommand.execute(WrappingRequestContext.of(req));
+        final ResponseContext result = CommandManager.of(commandName).execute(WrappingRequestContext.of(req));
         req.setAttribute(COMMAND_PARAMETER_NAME, commandName.toLowerCase());
         if (result.isRedirect()) {
             resp.sendRedirect(result.getPage());

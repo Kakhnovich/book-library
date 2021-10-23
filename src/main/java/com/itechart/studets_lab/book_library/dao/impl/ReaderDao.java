@@ -17,15 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ReaderDao implements CommonDao<Reader, String> {
+public class ReaderDao implements CommonDao<Reader> {
     private static final Logger LOGGER = LogManager.getLogger(ReaderDao.class);
     private static final ConnectionPool POOL = ConnectionPool.getInstance();
     private static final String FIND_ALL_READERS_SQL = "select * from reader";
     private static final String FIND_READERS_FOR_PAGE_SQL = "select * from reader order by firstName, lastName limit ";
-    private static final String FIND_READER_BY_EMAIL_SQL = "select * from reader where email = ";
-    private static final String GET_COUNT_OF_READERS_SQL = "select count(email) AS count from reader";
-    private static final String CREATE_NEW_READER_SQL = "insert into reader value (?,?,?,?,?,?)";
-    private static final String UPDATE_READER_DATA_SQL = "update reader set firstName = ?, lastName = ?, email = ?, gender = ?, phoneNumber = ?, registrationDate = ? where email = ?";
+    private static final String FIND_READER_BY_ID_SQL = "select * from reader where id = ";
+    private static final String GET_COUNT_OF_READERS_SQL = "select count(id) AS count from reader";
+    private static final String CREATE_NEW_READER_SQL = "insert into reader(firstName, lastName, email, gender, phoneNumber, registrationDate) value (?,?,?,?,?,?)";
+    private static final String UPDATE_READER_DATA_SQL = "update reader set firstName = ?, lastName = ?, email = ?, gender = ?, phoneNumber = ?, registrationDate = ? where id = ?";
     private static final String COUNT_COLUMN_NAME = "count";
 
     @Override
@@ -65,10 +65,10 @@ public class ReaderDao implements CommonDao<Reader, String> {
     }
 
     @Override
-    public Optional<Reader> findByKey(String email) {
+    public Optional<Reader> findByKey(int id) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
-             final ResultSet resultSet = statement.executeQuery(FIND_READER_BY_EMAIL_SQL + '\'' + email + '\'')) {
+             final ResultSet resultSet = statement.executeQuery(FIND_READER_BY_ID_SQL + '\'' + id + '\'')) {
             if (resultSet.next()) {
                 return Optional.of(retrieveReaderData(resultSet));
             }
@@ -93,11 +93,11 @@ public class ReaderDao implements CommonDao<Reader, String> {
     }
 
     @Override
-    public synchronized Optional<Reader> update(Reader reader) {
+    public Optional<Reader> update(Reader reader) {
         try (final Connection conn = POOL.retrieveConnection();
              final PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_READER_DATA_SQL)) {
             fillPreparedStatement(reader, preparedStatement);
-            preparedStatement.setString(7, reader.getEmail());
+            preparedStatement.setInt(7, reader.getId());
             preparedStatement.executeUpdate();
             return Optional.of(reader);
         } catch (SQLException e) {

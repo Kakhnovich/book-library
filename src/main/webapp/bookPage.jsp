@@ -10,8 +10,8 @@
 <jsp:include page="commands.jsp"/>
 <div class="container py-4">
     <form method="post"
-          action="${pageContext.request.contextPath}/controller?command=update_book&bookIsbn=${book.isbn}">
-        <h4><input required value="${book.title}" name="title"> Book page</h4>
+          action="${pageContext.request.contextPath}/controller?command=update_book&bookId=${book.id}">
+        <h4><input required value="${book.title}" name="title"> Book information page</h4>
         <%--    <div>${book.cover}</div>todo--%>
         <p>Author<c:if test="${book.authors.size()>1}">s</c:if>:
             <input required value="${authors}" name="authors">
@@ -33,7 +33,7 @@
             <c:otherwise>
 
             <c:choose>
-            <c:when test="${availableCount>0}">
+            <c:when test="${availableCount!=null && availableCount>0}">
             <p>Available (${availableCount} out of <input required type="number"
                                                           min="${book.totalAmount - availableCount}" max="100"
                                                           value="${book.totalAmount}" name="totalAmount">)</p>
@@ -46,13 +46,17 @@
             </c:otherwise>
             </c:choose>
             <div>
-                <input type="submit" value="Edit">
+                <input type="submit" value="Save">
                 </c:otherwise>
                 </c:choose>
-                <button onclick="window.location.href='/'">Dismiss</button>
+                <button onclick="window.location.href='/'">Discard</button>
             </div>
     </form>
-    <jsp:include page="borrowList.jsp"/>
+    <c:if test="${book.id!=null}">
+        <jsp:include page="borrowList.jsp"/>
+        <jsp:include page="borrowModalWindow.jsp"/>
+        <button onclick="showNewModal()">Add borrow</button>
+    </c:if>
 </div>
 </body>
 </html>

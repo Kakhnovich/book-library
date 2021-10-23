@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BookService implements CommonService<Book, Integer> {
+public class BookService implements CommonService<Book> {
     private static final BookService INSTANCE = new BookService();
     private final BookDao bookDao;
 
@@ -32,8 +32,8 @@ public class BookService implements CommonService<Book, Integer> {
     }
 
     @Override
-    public Optional<Book> findByKey(Integer isbn) {
-        return bookDao.findByKey(isbn);
+    public Optional<Book> findByKey(int id) {
+        return bookDao.findByKey(id);
     }
 
     @Override

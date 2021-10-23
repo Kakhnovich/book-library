@@ -10,7 +10,10 @@ create table book
     publishDate date not null,
     pageCount int not null,
     description varchar(150) not null,
-    totalAmount int not null
+    totalAmount int not null,
+    id int auto_increment,
+    constraint book_pk
+        primary key (id)
 );
 
 create unique index book_isbn_uindex
@@ -19,14 +22,10 @@ create unique index book_isbn_uindex
 create unique index book_title_uindex
     on book (title);
 
-alter table book
-    add constraint book_pk
-        primary key (isbn);
-
 create table borrow_record
 (
     bookId int not null,
-    email varchar(50) not null,
+    readerId int not null,
     borrowDate date not null,
     timePeriodId int not null,
     returnDate date null,
@@ -73,7 +72,7 @@ alter table borrow_record
 
 alter table borrow_record
     add constraint borrow_record_book_id_fk
-        foreign key (bookId) references book (isbn);
+        foreign key (bookId) references book (id);
 
 create table reader
 (
@@ -83,32 +82,33 @@ create table reader
     gender varchar(15) not null,
     phoneNumber int null,
     registrationDate date not null,
+    id int auto_increment,
     constraint reader_pk
-        primary key (email)
+        primary key (id)
 );
 
 alter table borrow_record
     add constraint borrow_record_reader_email_fk
-        foreign key (email) references reader (email);
+        foreign key (readerId) references reader (id);
 
-create table book_authors
+create table book_author
 (
     id int auto_increment,
-    book_isbn int not null,
+    book_id int not null,
     author varchar(50) not null,
     constraint book_authors_pk
         primary key (id),
-    constraint book_authors_book_isbn_fk
-        foreign key (book_isbn) references book (isbn)
+    constraint book_author_book_id_fk
+        foreign key (book_id) references book (id)
 );
 
-create table book_genres
+create table book_genre
 (
     id int auto_increment,
-    book_isbn int not null,
+    book_id int not null,
     genre varchar(30) not null,
     constraint book_genres_pk
         primary key (id),
-    constraint book_genres_book_isbn_fk
-        foreign key (book_isbn) references book (isbn)
+    constraint book_genre_book_id_fk
+        foreign key (book_id) references book (id)
 );

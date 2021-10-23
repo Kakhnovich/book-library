@@ -1,6 +1,7 @@
 package com.itechart.studets_lab.book_library.listener;
 
 import com.itechart.studets_lab.book_library.pool.ConnectionPool;
+import com.itechart.studets_lab.book_library.service.email.GmailService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -15,14 +16,17 @@ import javax.servlet.annotation.WebListener;
  */
 @WebListener
 public class ApplicationListener implements ServletContextListener {
+    private final GmailService gmailService = GmailService.getInstance();
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ConnectionPool.getInstance().init();
+        gmailService.startScheduler();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         ConnectionPool.getInstance().destroy();
+        gmailService.shutdownScheduler();
     }
-
 }

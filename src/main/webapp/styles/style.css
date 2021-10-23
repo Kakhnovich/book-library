@@ -7,22 +7,16 @@
 
 .modal-content {
     position: relative;
-    background-color: #E1BEE7;
+    background-color: #06e5df;
     margin: auto;
     padding: 0;
-    border: 5px solid #7B1FA2;
+    border: 5px solid #013533;
     width: 50%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
     animation-duration: 0.4s
-}
-
-.modal-header {
-    padding: 2px 16px;
-    background-color: #9C27B0;
-    color: white;
 }
 
 .modal-body {
@@ -32,5 +26,12 @@
 .close {
     font-size: 30px;
     font-weight: bold;
+}
+
+.selected {
+    display: block;
+    padding: .5rem 1rem;
+    color: rgba(255,255,255,.55);
+    text-decoration: underline;
 }
 

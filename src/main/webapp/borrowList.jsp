@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Borrow List</title>
+    <script src="js/modal.js"></script>
 </head>
 <body>
 <c:if test="${not empty borrows}">
@@ -21,7 +22,7 @@
             <c:forEach var="borrow" items="${requestScope.borrows}">
                 <tr>
                     <td>${borrow.reader.email}</td>
-                    <td>${borrow.reader.firstName} ${borrow.reader.lastName}</td>
+                    <td><a href="#" onclick="showModal(${borrow.toString()})">${borrow.reader.firstName} ${borrow.reader.lastName}</a></td>
                     <td>${borrow.borrowDate}</td>
                     <td>${borrow.borrowDate.plusMonths(borrow.duration)}</td>
                     <td>${borrow.returnDate}</td>

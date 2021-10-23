@@ -7,15 +7,16 @@ import com.itechart.studets_lab.book_library.command.page.ShowSearchPage;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookCriteria;
 import com.itechart.studets_lab.book_library.service.impl.BookService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public enum FindBook implements Command {
     INSTANCE;
 
-    private final BookService bookService = BookService.getInstance();
     private static final String BOOKS_PARAMETER_NAME = "books";
     private static final String TITLE_PARAMETER_NAME = "title";
     private static final String AUTHORS_PARAMETER_NAME = "authors";
@@ -23,6 +24,7 @@ public enum FindBook implements Command {
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String PAGE_PARAMETER_NAME = "page";
     private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
+    private final BookService bookService = BookService.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {
@@ -48,27 +50,24 @@ public enum FindBook implements Command {
     }
 
     private BookCriteria createCriteria(String title, String authors, String genres, String description) {
+       ;
         BookCriteria.CriteriaBuilder bookCriteria = BookCriteria.builder();
-        if (!title.equals("")) {
+        if (StringUtils.isNotBlank(title)) {
             bookCriteria.title(title);
         }
-        if (!authors.equals("")) {
+        if (StringUtils.isNotBlank(authors)) {
             bookCriteria.authors(parseStringIntoStringList(authors));
         }
-        if (!genres.equals("")) {
+        if (StringUtils.isNotBlank(genres)) {
             bookCriteria.genres(parseStringIntoStringList(genres));
         }
-        if (!description.equals("")) {
+        if (StringUtils.isNotBlank(description)) {
             bookCriteria.description(description);
         }
         return bookCriteria.build();
     }
 
     private List<String> parseStringIntoStringList(String set) {
-        List<String> rezList = new ArrayList<>();
-        for (String word : set.split(";")) {
-            rezList.add(word.trim());
-        }
-        return rezList;
+        return Collections.singletonList(set);
     }
 }

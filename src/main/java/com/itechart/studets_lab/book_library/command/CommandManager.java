@@ -48,7 +48,7 @@ public enum CommandManager {
      * @return command class
      * @see CommandManager#of(String)
      */
-    static Command of(String name) {
+    public static Command of(String name) {
         for (CommandManager action : values()) {
             if (action.name().equalsIgnoreCase(name)) {
                 return action.command;

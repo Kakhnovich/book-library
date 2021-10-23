@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 public enum SetBookData implements Command {
     INSTANCE;
 
-    private final BookService bookService = BookService.getInstance();
-    private static final String BOOK_ISBN_PARAMETER_NAME = "bookIsbn";
+    private static final String BOOK_ID_PARAMETER_NAME = "bookId";
     private static final String ISBN_PARAMETER_NAME = "isbn";
     private static final String COVER_PARAMETER_NAME = "cover";
     private static final String TITLE_PARAMETER_NAME = "title";
@@ -29,12 +28,13 @@ public enum SetBookData implements Command {
     private static final String PAGE_COUNT_PARAMETER_NAME = "pageCount";
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String TOTAL_AMOUNT_PARAMETER_NAME = "totalAmount";
+    private final BookService bookService = BookService.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {
-        Object bookIsbn = request.getParameter(BOOK_ISBN_PARAMETER_NAME);
-        Book book = createBorrow(request);
-        if (bookIsbn.equals("")) {
+        String bookId = String.valueOf(request.getParameter(BOOK_ID_PARAMETER_NAME));
+        Book book = createBook(request);
+        if (bookId.equals("")) {
             bookService.create(book);
         } else {
             bookService.update(book);
@@ -42,7 +42,9 @@ public enum SetBookData implements Command {
         return RedirectIndexPage.INSTANCE.execute(request);
     }
 
-    private Book createBorrow(RequestContext request) {
+    private Book createBook(RequestContext request) {
+        String idValue = String.valueOf(request.getParameter(BOOK_ID_PARAMETER_NAME));
+        int id = idValue.equals("") ? 0 : Integer.parseInt(idValue);
         int isbn = Integer.parseInt(String.valueOf(request.getParameter(ISBN_PARAMETER_NAME)));
         String cover = String.valueOf(request.getParameter(COVER_PARAMETER_NAME));
         String title = String.valueOf(request.getParameter(TITLE_PARAMETER_NAME));
@@ -54,11 +56,10 @@ public enum SetBookData implements Command {
         int pageCount = Integer.parseInt(String.valueOf(request.getParameter(PAGE_COUNT_PARAMETER_NAME)));
         String description = String.valueOf(request.getParameter(DESCRIPTION_PARAMETER_NAME));
         int totalAmount = Integer.parseInt(String.valueOf(request.getParameter(TOTAL_AMOUNT_PARAMETER_NAME)));
-        return BookFactory.getInstance().create(isbn, cover, title, parseString(authors), publisher, publishDate, parseString(genres), pageCount, description, totalAmount);
+        return BookFactory.getInstance().create(id, isbn, cover, title, parseString(authors), publisher, publishDate, parseString(genres), pageCount, description, totalAmount);
     }
 
     private List<String> parseString(String data) {
-        return Arrays.stream(data.trim().split(" ")).filter(word -> word.length() > 0).collect(Collectors.toList());
-        //todo validate unique data
+        return Arrays.stream(data.trim().split(" ")).filter(word -> word.length() > 0).distinct().collect(Collectors.toList());
     }
 }

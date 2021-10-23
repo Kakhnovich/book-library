@@ -7,6 +7,7 @@ import java.util.List;
 
 public class BookFactory {
     private static final BookFactory INSTANCE = new BookFactory();
+    private static final String ID_COLUMN_NAME = "id";
     private static final String ISBN_COLUMN_NAME = "isbn";
     private static final String COVER_LINK_COLUMN_NAME = "cover";
     private static final String TITLE_COLUMN_NAME = "title";
@@ -25,6 +26,7 @@ public class BookFactory {
 
     public Book create(ResultSet resultSet, List<String> authors, List<String> genres) throws SQLException {
         return Book.builder()
+                .id(resultSet.getInt(ID_COLUMN_NAME))
                 .isbn(resultSet.getInt(ISBN_COLUMN_NAME))
                 .coverLink(resultSet.getString(COVER_LINK_COLUMN_NAME))
                 .title(resultSet.getString(TITLE_COLUMN_NAME))
@@ -38,8 +40,9 @@ public class BookFactory {
                 .build();
     }
 
-    public Book create(int isbn, String cover, String title, List<String> authors, String publisher, LocalDate publishDate, List<String> genres, int pageCount, String description, int totalAmount) {
+    public Book create(int id, int isbn, String cover, String title, List<String> authors, String publisher, LocalDate publishDate, List<String> genres, int pageCount, String description, int totalAmount) {
         return Book.builder()
+                .id(id)
                 .isbn(isbn)
                 .coverLink(cover)
                 .title(title)

@@ -4,7 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ReaderFactory {
-    private final static ReaderFactory INSTANCE = new ReaderFactory();
+    private static final ReaderFactory INSTANCE = new ReaderFactory();
+    private static final String ID_COLUMN_NAME = "id";
     private static final String FIRST_NAME_COLUMN_NAME = "firstName";
     private static final String LAST_NAME_COLUMN_NAME = "lastName";
     private static final String EMAIL_COLUMN_NAME = "email";
@@ -21,6 +22,7 @@ public class ReaderFactory {
 
     public Reader create(ResultSet resultSet) throws SQLException {
         return Reader.builder()
+                .id(resultSet.getInt(ID_COLUMN_NAME))
                 .firstName(resultSet.getString(FIRST_NAME_COLUMN_NAME))
                 .lastName(resultSet.getString(LAST_NAME_COLUMN_NAME))
                 .email(resultSet.getString(EMAIL_COLUMN_NAME))

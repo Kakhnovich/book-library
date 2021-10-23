@@ -3,10 +3,10 @@ package com.itechart.studets_lab.book_library.dao;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommonDao<T, K> {
+public interface CommonDao<T> {
     Optional<List<T>> findAll();
 
-    Optional<T> findByKey(K key);
+    Optional<T> findByKey(int key);
 
     int getCountOfPages();
 
