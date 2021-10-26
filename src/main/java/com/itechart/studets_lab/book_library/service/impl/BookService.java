@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/* CommonService это хорошо, но сами классы должны реализовывать интерфес, если у тебя в них будут какие то паблик методы, выходящие за уровень CommonService.
+* А такие скорей всего будут, т.к. сервисы точно не могут быть унифицированы одним интерфейсом в полноценном приложении. */
 public class BookService implements CommonService<Book> {
     private static final BookService INSTANCE = new BookService();
     private final BookDao bookDao;
@@ -51,6 +53,7 @@ public class BookService implements CommonService<Book> {
         return bookDao.getCountOfPages();
     }
 
+    // Вот как раз пример паблик метода, который не представлен в интерфейсе
     public Optional<List<Book>> findByCriteria(BookCriteria bookCriteria) {
         return findAll().map(bookList -> bookList.stream()
                 .filter(book -> bookCriteria.getTitle().equals("")

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/* CommonDao это хорошо, но сами классы должны реализовывать интерфес, если у тебя в них будут какие то паблик методы, выходящие за уровень CommonDao */
 public class ReaderDao implements CommonDao<Reader> {
     private static final Logger LOGGER = LogManager.getLogger(ReaderDao.class);
     private static final ConnectionPool POOL = ConnectionPool.getInstance();
@@ -52,6 +53,7 @@ public class ReaderDao implements CommonDao<Reader> {
         }
     }
 
+    // Прайвет методы двигай в конец класса, сразу ток паблик методы
     private Optional<List<Reader>> retrieveReadersFromSet(ResultSet resultSet) throws SQLException {
         List<Reader> readers = new ArrayList<>();
         while (resultSet.next()) {

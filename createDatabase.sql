@@ -1,3 +1,5 @@
+DROP SCHEMA IF EXISTS book_library;
+
 create database book_library;
 use book_library;
 
@@ -7,6 +9,7 @@ create table book
     cover varchar(255) null,
     title varchar(50) not null,
     publisher varchar(50) not null,
+#     не используй кэмл кейс в sql, правильнее чере нижнее подчеркивание publish_date
     publishDate date not null,
     pageCount int not null,
     description varchar(150) not null,
