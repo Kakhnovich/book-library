@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum ShowBookPage implements Command {
     INSTANCE;
@@ -34,7 +35,9 @@ public enum ShowBookPage implements Command {
     @Override
     public ResponseContext execute(RequestContext request) {
         String id = String.valueOf(request.getParameter(ID_PARAMETER_NAME));
-        final int bookId = (id.equals("null")) ? 0 : Integer.parseInt(id);
+        // выноси лучше все строки в константы
+        // И такого рода сравнения лучше начинать с константы "null".equals(id) , ты тогда точно не получишь NPE
+        final int bookId = ("null".equals(id)) ? 0 : Integer.parseInt(id);
         Optional<Book> book = bookService.findByKey(bookId);
         book.ifPresent(value -> setRequestAttributes(request, value));
         return BOOK_PAGE_RESPONSE;
@@ -44,8 +47,11 @@ public enum ShowBookPage implements Command {
         request.setAttribute(BOOK_ATTRIBUTE_NAME, book);
         request.setAttribute(BOOK_AUTHORS_ATTRIBUTE_NAME, parseList(book.getAuthors()));
         request.setAttribute(BOOK_GENRES_ATTRIBUTE_NAME, parseList(book.getGenres()));
+        /* Optional<List<Borrow>> - нет особого смысла заварачивать коллекцию в опшинал, ты же все равно потом по идее будешь проверять, пустая она или нет.
+        * А так код достаточно кучерявый получается :)
+        * и проверять коллекцию, пустая она или нет, элегантнее через collection.isEmpty()*/
         Optional<List<Borrow>> borrows = borrowService.findBorrowsOfBook(book.getId());
-        if (borrows.isPresent() && borrows.get().size() > 0) {
+        if (borrows.isPresent() && borrows.get().isEmpty()) {
             request.setAttribute(BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME, book.getTotalAmount() - borrows.get().size());
             request.setAttribute(BOOK_BORROWS_ATTRIBUTE_NAME, borrows.get());
             request.setAttribute(AVAILABLE_DATE_ATTRIBUTE_NAME, getAvailableDate(borrows.get()));
@@ -66,6 +72,9 @@ public enum ShowBookPage implements Command {
     }
 
     private String parseList(List<String> list) {
+        /* Чисто пример, как тут можно перепиать на стримы. Посмотри на досуге, какие коллекторы есть
+        * return list.stream().map(element -> element + ' ').collect(Collectors.joining()).toString().trim();
+        * */
         StringBuilder stringBuilder = new StringBuilder();
         for (String element : list) {
             stringBuilder.append(element).append(' ');
