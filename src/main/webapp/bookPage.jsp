@@ -9,10 +9,18 @@
 <body>
 <jsp:include page="commands.jsp"/>
 <div class="container py-4">
-    <form method="post"
-          action="${pageContext.request.contextPath}/controller?command=update_book&bookId=${book.id}">
-        <h4><input required value="${book.title}" name="title"> Book information page</h4>
-        <%--    <div>${book.cover}</div>todo--%>
+    <c:if test="${book!=null}">
+        <form method="post" action="${pageContext.request.contextPath}/upload?bookId=${book.id}"
+              enctype="multipart/form-data">
+            <div>
+                <img src="${book.coverLink}" alt="${book.title} cover"/>
+                <input type="file" name="cover">
+                <input type="submit" value="update cover">
+            </div>
+        </form>
+    </c:if>
+    <form method="post" action="${pageContext.request.contextPath}/controller?command=update_book&bookId=${book.id}">
+        <h4><input required value="${book.title}" name="title" accept=".jpg, .png"> Book information page</h4>
         <p>Author<c:if test="${book.authors.size()>1}">s</c:if>:
             <input required value="${authors}" name="authors">
         </p>

@@ -1,18 +1,25 @@
 package com.itechart.studets_lab.book_library.service;
 
+import com.itechart.studets_lab.book_library.model.Book;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommonService<T> {
-    Optional<List<T>> findAll();
+public interface CommonService<T, K> {
+    List<T> findAll();
 
-    Optional<List<T>> findByPage(int page);
+    List<T> findByPage(int page);
 
-    Optional<T> findByKey(int key);
+    T findByKey(int key);
 
-    Optional<T> create(T entity);
+    T create(K entity);
 
-    Optional<T> update(T entity);
+    T update(K entity);
 
     int getCountOfPages();
+
+    default List<T> checkOptionalList(Optional<List<T>> entities) {
+        return entities.orElseGet(ArrayList::new);
+    }
 }

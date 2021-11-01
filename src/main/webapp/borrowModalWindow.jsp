@@ -12,33 +12,30 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-body">
-            <form method="post"
-                  action="${pageContext.request.contextPath}/controller?command=update_borrow&borrowId=${borrowInfo.id}">
-                <p>Reader email address - <select required name="email">
-                    <c:forEach var="email" items="emails">
-                        <option value="${email}">${email}</option>
+            <p>Reader email address - <select required name="email">
+                <c:forEach var="email" items="${emails}">
+                    <option value="${email}">${email}</option>
+                </c:forEach>
+            </select></p>
+            <%--                <p>Reader name - <input required name="name" disabled--%>
+            <%--                                        value="${borrow.reader.firstName} ${borrow.reader.secondName}"></p>--%>
+            <c:if test="${borrowInfo!=null}">
+                <p>Borrow date - <input required name="borrowDate" type="date" value="${borrowInfo.borrowDate}"></p>
+            </c:if>
+            <p>Time period (months) - <select required name="duration">
+                <c:forEach var="period" items="${periods}">
+                    <option value="${period}">${period}</option>
+                </c:forEach>
+            </select></p>
+            <c:if test="${borrowInfo.returnDate!=null}">
+                <p>Status - <select required name="status">
+                    <c:forEach var="status" items="${statuses}">
+                        <option value="${status}">${status}</option>
                     </c:forEach>
                 </select></p>
-                <%--                <p>Reader name - <input required name="name" disabled--%>
-                <%--                                        value="${borrow.reader.firstName} ${borrow.reader.secondName}"></p>--%>
-                <c:if test="${borrowInfo!=null}">
-                    <p>Borrow date - <input required name="borrowDate" type="date" value="${borrowInfo.borrowDate}"></p>
-                </c:if>
-                <p>Time period (months) - <select required name="duration">
-                    <c:forEach var="period" items="periods">
-                        <option value="${period}">${period}</option>
-                    </c:forEach>
-                </select></p>
-                <c:if test="${borrowInfo.returnDate!=null}">
-                    <p>Status - <select required name="status">
-                        <c:forEach var="status" items="statuses">
-                            <option value="${status}">${status}</option>
-                        </c:forEach>
-                    </select></p>
-                </c:if>
-                <p>Comment: <input name="comment" value="${borrowInfo.comment}"></p>
-                <input type="submit" value="Save">
-            </form>
+            </c:if>
+            <p>Comment: <input name="comment" value="${borrowInfo.comment}"></p>
+            <button onclick="addTableRow()">Save</button>
             <button onclick="closeModal()">Discard</button>
         </div>
     </div>

@@ -8,7 +8,7 @@
 <body>
 <c:if test="${not empty borrows}">
     <div class="table-responsive">
-        <table class="table table-striped table-sm" border="2">
+        <table id="table" class="table table-striped table-sm" border="2">
             <thead>
             <tr>
                 <th>Reader Email</th>

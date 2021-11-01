@@ -6,7 +6,8 @@ import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.page.RedirectIndexPage;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookFactory;
-import com.itechart.studets_lab.book_library.service.impl.BookService;
+import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +29,7 @@ public enum SetBookData implements Command {
     private static final String PAGE_COUNT_PARAMETER_NAME = "pageCount";
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String TOTAL_AMOUNT_PARAMETER_NAME = "totalAmount";
-    private final BookService bookService = BookService.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {

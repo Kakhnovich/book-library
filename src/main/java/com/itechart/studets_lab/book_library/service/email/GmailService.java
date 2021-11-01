@@ -1,6 +1,5 @@
 package com.itechart.studets_lab.book_library.service.email;
 
-import com.itechart.studets_lab.book_library.dao.impl.BookDao;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +7,6 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -26,11 +24,11 @@ public class GmailService {
     private GmailService() {
     }
 
-    public static GmailService getInstance(){
+    public static GmailService getInstance() {
         return INSTANCE;
     }
 
-    public void startScheduler(){
+    public void startScheduler() {
         try {
             BasicConfigurator.configure();
             sched = new StdSchedulerFactory().getScheduler();
@@ -46,7 +44,7 @@ public class GmailService {
         }
     }
 
-    public void shutdownScheduler(){
+    public void shutdownScheduler() {
         try {
             sched.shutdown();
         } catch (SchedulerException e) {

@@ -21,11 +21,12 @@ public class ReaderDao implements CommonDao<Reader> {
     private static final Logger LOGGER = LogManager.getLogger(ReaderDao.class);
     private static final ConnectionPool POOL = ConnectionPool.getInstance();
     private static final String FIND_ALL_READERS_SQL = "select * from reader";
-    private static final String FIND_READERS_FOR_PAGE_SQL = "select * from reader order by firstName, lastName limit ";
+    private static final String FIND_READERS_FOR_PAGE_SQL = "select * from reader order by first_name, last_name limit ";
     private static final String FIND_READER_BY_ID_SQL = "select * from reader where id = ";
+    private static final String FIND_READERS_EMAILS_SQL = "select email from reader";
     private static final String GET_COUNT_OF_READERS_SQL = "select count(id) AS count from reader";
-    private static final String CREATE_NEW_READER_SQL = "insert into reader(firstName, lastName, email, gender, phoneNumber, registrationDate) value (?,?,?,?,?,?)";
-    private static final String UPDATE_READER_DATA_SQL = "update reader set firstName = ?, lastName = ?, email = ?, gender = ?, phoneNumber = ?, registrationDate = ? where id = ?";
+    private static final String CREATE_NEW_READER_SQL = "insert into reader(first_name, last_name, email, gender, phone_number, registration_date) value (?,?,?,?,?,?)";
+    private static final String UPDATE_READER_DATA_SQL = "update reader set first_name = ?, last_name = ?, email = ?, gender = ?, phone_number = ?, registration_date = ? where id = ?";
     private static final String COUNT_COLUMN_NAME = "count";
 
     @Override
@@ -76,6 +77,21 @@ public class ReaderDao implements CommonDao<Reader> {
             LOGGER.error("SQLException while trying to find Reader by Email: " + e.getLocalizedMessage());
         }
         return Optional.empty();
+    }
+
+    public Optional<List<String>> findAllEmails() {
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement();
+             final ResultSet resultSet = statement.executeQuery(FIND_READERS_EMAILS_SQL)) {
+            List<String> emails = new ArrayList<>();
+            while (resultSet.next()) {
+                emails.add(resultSet.getString(1));
+            }
+            return Optional.of(emails);
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to find Readers Emails: " + e.getLocalizedMessage());
+            return Optional.empty();
+        }
     }
 
     @Override

@@ -1,3 +1,5 @@
+DROP SCHEMA IF EXISTS book_library;
+
 create database book_library;
 use book_library;
 
@@ -7,10 +9,10 @@ create table book
     cover varchar(255) null,
     title varchar(50) not null,
     publisher varchar(50) not null,
-    publishDate date not null,
-    pageCount int not null,
+    publish_date date not null,
+    page_count int not null,
     description varchar(150) not null,
-    totalAmount int not null,
+    total_amount int not null,
     id int auto_increment,
     constraint book_pk
         primary key (id)
@@ -24,13 +26,13 @@ create unique index book_title_uindex
 
 create table borrow_record
 (
-    bookId int not null,
-    readerId int not null,
-    borrowDate date not null,
-    timePeriodId int not null,
-    returnDate date null,
+    book_id int not null,
+    reader_id int not null,
+    borrow_date date not null,
+    time_period_id int not null,
+    return_date date null,
     comment varchar(150) null,
-    statusId int null,
+    status_id int null,
     id int auto_increment,
     constraint borrow_record_pk
         primary key (id)
@@ -64,24 +66,24 @@ insert into borrow_period(months) values (1),(2),(3),(6),(12);
 
 alter table borrow_record
     add constraint borrow_record_borrow_status_id_fk
-        foreign key (statusId) references borrow_status (id);
+        foreign key (status_id) references borrow_status (id);
 
 alter table borrow_record
     add constraint borrow_record_time_period_id_fk
-        foreign key (timePeriodId) references borrow_period (id);
+        foreign key (time_period_id) references borrow_period (id);
 
 alter table borrow_record
     add constraint borrow_record_book_id_fk
-        foreign key (bookId) references book (id);
+        foreign key (book_id) references book (id);
 
 create table reader
 (
-    firstName varchar(15) not null,
-    lastName varchar(20) not null,
+    first_name varchar(15) not null,
+    last_name varchar(20) not null,
     email varchar(50) not null,
     gender varchar(15) not null,
-    phoneNumber int null,
-    registrationDate date not null,
+    phone_number int null,
+    registration_date date not null,
     id int auto_increment,
     constraint reader_pk
         primary key (id)
@@ -89,7 +91,7 @@ create table reader
 
 alter table borrow_record
     add constraint borrow_record_reader_email_fk
-        foreign key (readerId) references reader (id);
+        foreign key (reader_id) references reader (id);
 
 create table book_author
 (

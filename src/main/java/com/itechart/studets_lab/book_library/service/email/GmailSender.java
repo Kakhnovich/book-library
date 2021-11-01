@@ -1,9 +1,11 @@
 package com.itechart.studets_lab.book_library.service.email;
 
 import com.itechart.studets_lab.book_library.model.Book;
-import com.itechart.studets_lab.book_library.model.Borrow;
-import com.itechart.studets_lab.book_library.service.impl.BookService;
-import com.itechart.studets_lab.book_library.service.impl.BorrowService;
+import com.itechart.studets_lab.book_library.model.BorrowDto;
+import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.BorrowService;
+import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
+import com.itechart.studets_lab.book_library.service.impl.BorrowServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
@@ -27,15 +29,14 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 
 public class GmailSender implements Job {
     private static final Logger LOGGER = LogManager.getLogger(GmailSender.class);
-    private static final String PROPS_FILE_NAME = "email.properties";
+    private static final String PROPS_FILE_NAME = "gmail.properties";
     private final Properties prop = new Properties();
-    private final BorrowService borrowService = BorrowService.getInstance();
-    private final BookService bookService = BookService.getInstance();
+    private final BorrowService borrowService = BorrowServiceImpl.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
     private String username;
     private String password;
     private String mailSubject;
@@ -49,7 +50,7 @@ public class GmailSender implements Job {
         prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
     }
 
-    public void sendMailForReader(Borrow borrow, Book book) {
+    public void sendMailForReader(BorrowDto borrow, Book book) {
         //todo code cleanup
         try (InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream(PROPS_FILE_NAME)) {
             Properties emailProperties = new Properties();
@@ -113,13 +114,15 @@ public class GmailSender implements Job {
         if (prop.isEmpty()) {
             setSmtpProperties();
         }
-        Optional<List<Borrow>> borrows = borrowService.findAll();
-        if (borrows.isPresent()) {
-            for (Borrow borrow : borrows.get()) {
+        List<BorrowDto> borrows = borrowService.findAll();
+        if (!borrows.isEmpty()) {
+            for (BorrowDto borrow : borrows) {
                 long daysLeft = getDaysLeft(borrow.getBorrowDate(), borrow.getDuration());
                 if (daysLeft <= 1 || daysLeft == 7) {
-                    Optional<Book> book = bookService.findByKey(borrow.getBookId());
-                    book.ifPresent(realBook -> sendMailForReader(borrow, realBook));
+                    Book book = bookService.findByKey(borrow.getBookId());
+                    if (book != null) {
+                        sendMailForReader(borrow, book);
+                    }
                 }
             }
         }

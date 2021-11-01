@@ -6,13 +6,13 @@ import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.page.ShowSearchPage;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookCriteria;
-import com.itechart.studets_lab.book_library.service.impl.BookService;
+import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public enum FindBook implements Command {
     INSTANCE;
@@ -24,7 +24,7 @@ public enum FindBook implements Command {
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String PAGE_PARAMETER_NAME = "page";
     private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
-    private final BookService bookService = BookService.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {
@@ -33,16 +33,15 @@ public enum FindBook implements Command {
         final String genres = String.valueOf(request.getParameter(GENRES_PARAMETER_NAME));
         final String description = String.valueOf(request.getParameter(DESCRIPTION_PARAMETER_NAME));
         final BookCriteria bookCriteria = createCriteria(title, authors, genres, description);
-        Optional<List<Book>> books = bookService.findByCriteria(bookCriteria);
+        List<Book> books = bookService.findByCriteria(bookCriteria);
         String page = String.valueOf(request.getParameter(PAGE_PARAMETER_NAME));
         final int pageNumber = (page.equals("null")) ? 1 : Integer.parseInt(page);
         request.setAttribute(PAGE_PARAMETER_NAME, pageNumber);
-        if (books.isPresent()) {
-            List<Book> bookList = books.get();
-            request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, bookList.size() % 10 + 1);
+        if (!books.isEmpty()) {
+            request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, books.size() % 10 + 1);
             List<Book> rezList = new ArrayList<>();
-            for (int i = 10 * (pageNumber - 1); i < 10 * pageNumber && i < bookList.size(); i++) {
-                rezList.add(bookList.get(i));
+            for (int i = 10 * (pageNumber - 1); i < 10 * pageNumber && i < books.size(); i++) {
+                rezList.add(books.get(i));
             }
             request.setAttribute(BOOKS_PARAMETER_NAME, rezList);
         }
@@ -50,7 +49,7 @@ public enum FindBook implements Command {
     }
 
     private BookCriteria createCriteria(String title, String authors, String genres, String description) {
-       ;
+        ;
         BookCriteria.CriteriaBuilder bookCriteria = BookCriteria.builder();
         if (StringUtils.isNotBlank(title)) {
             bookCriteria.title(title);

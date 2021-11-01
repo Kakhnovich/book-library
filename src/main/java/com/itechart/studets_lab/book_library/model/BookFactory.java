@@ -12,10 +12,10 @@ public class BookFactory {
     private static final String COVER_LINK_COLUMN_NAME = "cover";
     private static final String TITLE_COLUMN_NAME = "title";
     private static final String PUBLISHER_COLUMN_NAME = "publisher";
-    private static final String PUBLISH_DATE_COLUMN_NAME = "publishDate";
-    private static final String PAGE_COUNT_COLUMN_NAME = "pageCount";
+    private static final String PUBLISH_DATE_COLUMN_NAME = "publish_date";
+    private static final String PAGE_COUNT_COLUMN_NAME = "page_count";
     private static final String DESCRIPTION_COLUMN_NAME = "description";
-    private static final String TOTAL_AMOUNT_COLUMN_NAME = "totalAmount";
+    private static final String TOTAL_AMOUNT_COLUMN_NAME = "total_amount";
 
     private BookFactory() {
     }

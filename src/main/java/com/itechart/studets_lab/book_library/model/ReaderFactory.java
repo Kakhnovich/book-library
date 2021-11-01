@@ -6,12 +6,12 @@ import java.sql.SQLException;
 public class ReaderFactory {
     private static final ReaderFactory INSTANCE = new ReaderFactory();
     private static final String ID_COLUMN_NAME = "id";
-    private static final String FIRST_NAME_COLUMN_NAME = "firstName";
-    private static final String LAST_NAME_COLUMN_NAME = "lastName";
+    private static final String FIRST_NAME_COLUMN_NAME = "first_name";
+    private static final String LAST_NAME_COLUMN_NAME = "last_name";
     private static final String EMAIL_COLUMN_NAME = "email";
     private static final String GENDER_COLUMN_NAME = "gender";
-    private static final String PHONE_NUMBER_COLUMN_NAME = "phoneNumber";
-    private static final String DATE_OF_REGISTRATION_COLUMN_NAME = "registrationDate";
+    private static final String PHONE_NUMBER_COLUMN_NAME = "phone_number";
+    private static final String DATE_OF_REGISTRATION_COLUMN_NAME = "registration_date";
 
     private ReaderFactory() {
     }

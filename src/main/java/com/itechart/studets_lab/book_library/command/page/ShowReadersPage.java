@@ -4,11 +4,8 @@ import com.itechart.studets_lab.book_library.command.Command;
 import com.itechart.studets_lab.book_library.command.RequestContext;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.UrlPatterns;
-import com.itechart.studets_lab.book_library.model.Reader;
-import com.itechart.studets_lab.book_library.service.impl.ReaderService;
-
-import java.util.List;
-import java.util.Optional;
+import com.itechart.studets_lab.book_library.service.ReaderService;
+import com.itechart.studets_lab.book_library.service.impl.ReaderServiceImpl;
 
 public enum ShowReadersPage implements Command {
     INSTANCE;
@@ -16,7 +13,7 @@ public enum ShowReadersPage implements Command {
     private static final String READERS_ATTRIBUTE_NAME = "readers";
     private static final String PAGE_PARAMETER_NAME = "page";
     private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
-    private final ReaderService readerService = ReaderService.getInstance();
+    private final ReaderService readerService = ReaderServiceImpl.getInstance();
 
     private static final ResponseContext READERS_PAGE_RESPONSE = new ResponseContext(UrlPatterns.READERS, false);
 
@@ -30,8 +27,7 @@ public enum ShowReadersPage implements Command {
         final int pageNumber = (page.equals("null")) ? 1 : Integer.parseInt(page);
         request.setAttribute(PAGE_PARAMETER_NAME, pageNumber);
         request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, readerService.getCountOfPages());
-        Optional<List<Reader>> readers = readerService.findByPage(pageNumber);
-        readers.ifPresent(readerList -> request.setAttribute(READERS_ATTRIBUTE_NAME, readerList));
+        request.setAttribute(READERS_ATTRIBUTE_NAME, readerService.findByPage(pageNumber));
         return READERS_PAGE_RESPONSE;
     }
 }

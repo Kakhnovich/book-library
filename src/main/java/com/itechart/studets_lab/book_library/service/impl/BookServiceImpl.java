@@ -3,47 +3,46 @@ package com.itechart.studets_lab.book_library.service.impl;
 import com.itechart.studets_lab.book_library.dao.impl.BookDao;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookCriteria;
-import com.itechart.studets_lab.book_library.service.CommonService;
+import com.itechart.studets_lab.book_library.service.BookService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BookService implements CommonService<Book> {
-    private static final BookService INSTANCE = new BookService();
+public class BookServiceImpl implements BookService {
+    private static final BookServiceImpl INSTANCE = new BookServiceImpl();
     private final BookDao bookDao;
 
-    private BookService() {
+    private BookServiceImpl() {
         bookDao = new BookDao();
     }
 
-    public static BookService getInstance() {
+    public static BookServiceImpl getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public Optional<List<Book>> findAll() {
-        return bookDao.findAll();
+    public List<Book> findAll() {
+        return checkOptionalList(bookDao.findAll());
     }
 
     @Override
-    public Optional<List<Book>> findByPage(int page) {
-        return bookDao.findByPageNumber(page);
+    public List<Book> findByPage(int page) {
+        return checkOptionalList(bookDao.findByPageNumber(page));
     }
 
     @Override
-    public Optional<Book> findByKey(int id) {
-        return bookDao.findByKey(id);
+    public Book findByKey(int id) {
+        return bookDao.findByKey(id).orElse(null);
     }
 
     @Override
-    public Optional<Book> create(Book book) {
-        return bookDao.create(book);
+    public Book create(Book book) {
+        return bookDao.create(book).orElse(null);
     }
 
     @Override
-    public Optional<Book> update(Book book) {
-        return bookDao.update(book);
+    public Book update(Book book) {
+        return bookDao.update(book).orElse(null);
     }
 
     @Override
@@ -51,8 +50,9 @@ public class BookService implements CommonService<Book> {
         return bookDao.getCountOfPages();
     }
 
-    public Optional<List<Book>> findByCriteria(BookCriteria bookCriteria) {
-        return findAll().map(bookList -> bookList.stream()
+    @Override
+    public List<Book> findByCriteria(BookCriteria bookCriteria) {
+        return findAll().stream()
                 .filter(book -> bookCriteria.getTitle().equals("")
                         || book.getTitle().equals(bookCriteria.getTitle()))
                 .filter(book -> bookCriteria.getAuthors().size() == 0
@@ -61,6 +61,6 @@ public class BookService implements CommonService<Book> {
                         || book.getGenres().containsAll(bookCriteria.getGenres()))
                 .filter(book -> bookCriteria.getDescription().equals("")
                         || book.getDescription().equals(bookCriteria.getDescription()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 }
