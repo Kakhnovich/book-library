@@ -14,7 +14,7 @@
         <form method="post" action="${pageContext.request.contextPath}/upload?bookId=${book.id}"
               enctype="multipart/form-data">
             <div>
-                <img src="${book.coverLink}" alt="${book.title} cover"/>
+                <img src="img/${book.coverLink}" alt="${book.title} cover" accept="image/png, image/jpg"/>
                 <input type="file" name="cover">
                 <input type="submit" value="update cover">
             </div>

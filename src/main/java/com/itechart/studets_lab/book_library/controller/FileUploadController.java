@@ -3,7 +3,10 @@ package com.itechart.studets_lab.book_library.controller;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.WrappingRequestContext;
 import com.itechart.studets_lab.book_library.command.page.ShowBookPage;
-import com.itechart.studets_lab.book_library.service.google_drive.DriveService;
+import com.itechart.studets_lab.book_library.model.Book;
+import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.cover.FileReader;
+import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,16 +16,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 @WebServlet("/upload")
 @MultipartConfig(maxFileSize = 1024 * 1024 * 2)
 public class FileUploadController extends HttpServlet {
+    private static final String BOOK_ID_PARAMETER_NAME = "bookId";
+    private static final String COVER_PARAMETER_NAME = "cover";
+    private final BookService bookService = BookServiceImpl.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);
@@ -34,12 +37,14 @@ public class FileUploadController extends HttpServlet {
     }
 
     private void process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final Part filePart = req.getPart("cover");
-        InputStream fileInputStream = filePart.getInputStream();
-        File fileToSave = new File("WebContent/uploaded-files/" + filePart.getSubmittedFileName());
-        Files.copy(fileInputStream, fileToSave.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Part filePart = req.getPart(COVER_PARAMETER_NAME);
+        String packagePath = req.getSession().getServletContext().getRealPath("/") + "img/";
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        String id = DriveService.getInstance().upload(fileName);
+        String coverPath = FileReader.getInstance().read(packagePath, filePart, fileName);
+        int bookId = Integer.parseInt(String.valueOf(req.getParameter(BOOK_ID_PARAMETER_NAME)));
+        Book book = bookService.findByKey(bookId);
+        book.setCoverLink(coverPath);
+        bookService.update(book);
         final ResponseContext result = ShowBookPage.INSTANCE.execute(WrappingRequestContext.of(req));
         if (result.isRedirect()) {
             resp.sendRedirect(result.getPage());

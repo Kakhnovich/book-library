@@ -14,6 +14,10 @@ let actualRow = 0;
 let totalAmount;
 let availableCount;
 let addButton;
+let img = document.getElementsByTagName('img')[0];
+img.onerror = () => {
+    img.src = '/img/default.jpg';
+}
 
 window.onload = function () {
     form = document.getElementById('form');

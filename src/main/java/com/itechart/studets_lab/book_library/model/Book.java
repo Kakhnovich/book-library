@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Book {
     private final int id;
     private final int isbn;
-    private final String coverLink;
+    private String coverLink;
     private final String title;
     private final List<String> authors;
     private final String publisher;
@@ -127,6 +127,10 @@ public class Book {
 
     public String getCoverLink() {
         return coverLink;
+    }
+
+    public void setCoverLink(String coverLink) {
+        this.coverLink = coverLink;
     }
 
     public String getTitle() {

@@ -26,8 +26,8 @@ public class BookDao implements CommonDao<Book> {
     private static final String FIND_BOOK_AUTHORS_SQL = "select author from book_author join book b on b.id = book_author.book_id where book_id = ";
     private static final String FIND_BOOK_BY_ID_SQL = "select id, isbn, cover, title, publisher, publish_date, page_count, description, total_amount from book where id = ";
     private static final String GET_COUNT_OF_BOOKS_SQL = "select count(id) AS count from book";
-    private static final String CREATE_NEW_BOOK_SQL = "insert into book(isbn, title, publisher, publish_date, page_count, description, total_amount) value (?,?,?,?,?,?,?)";
-    private static final String UPDATE_BOOK_DATA_SQL = "update book set isbn = ?, title = ?, publisher = ?, publish_date = ?, page_count = ?, description = ?, total_amount = ? where id = ?";
+    private static final String CREATE_NEW_BOOK_SQL = "insert into book(isbn, title, cover, publisher, publish_date, page_count, description, total_amount) value (?,?,?,?,?,?,?)";
+    private static final String UPDATE_BOOK_DATA_SQL = "update book set isbn = ?, cover = ?, title = ?, publisher = ?, publish_date = ?, page_count = ?, description = ?, total_amount = ? where id = ?";
     private static final String DELETE_BOOK_DATA_SQL = "delete from book where id = ";
     private static final String DELETE_BOOK_AUTHORS_SQL = "delete from book_author where book_id = ";
     private static final String DELETE_BOOK_GENRES_SQL = "delete from book_genre where book_id = ";
@@ -135,7 +135,7 @@ public class BookDao implements CommonDao<Book> {
         try (final Connection conn = POOL.retrieveConnection();
              final PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_BOOK_DATA_SQL)) {
             fillPreparedStatement(book, preparedStatement);
-            preparedStatement.setInt(8, book.getId());
+            preparedStatement.setInt(9, book.getId());
             deleteBookAuthors(book.getId());
             deleteBookGenres(book.getId());
             preparedStatement.executeUpdate();
@@ -177,12 +177,13 @@ public class BookDao implements CommonDao<Book> {
 
     private void fillPreparedStatement(Book book, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setInt(1, book.getIsbn());
-        preparedStatement.setString(2, book.getTitle());
-        preparedStatement.setString(3, book.getPublisher());
-        preparedStatement.setDate(4, Date.valueOf(book.getPublishDate()));
-        preparedStatement.setInt(5, book.getPageCount());
-        preparedStatement.setString(6, book.getDescription());
-        preparedStatement.setInt(7, book.getTotalAmount());
+        preparedStatement.setString(2, book.getCoverLink());
+        preparedStatement.setString(3, book.getTitle());
+        preparedStatement.setString(4, book.getPublisher());
+        preparedStatement.setDate(5, Date.valueOf(book.getPublishDate()));
+        preparedStatement.setInt(6, book.getPageCount());
+        preparedStatement.setString(7, book.getDescription());
+        preparedStatement.setInt(8, book.getTotalAmount());
     }
 
     private void deleteBookAuthors(int id) {
