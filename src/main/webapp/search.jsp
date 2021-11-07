@@ -19,6 +19,7 @@
     <c:if test="${not empty requestScope.books}">
         <jsp:include page="bookList.jsp"/>
     </c:if>
+    <div><p>${errorMsg}</p></div>
 </div>
 </body>
 </html>

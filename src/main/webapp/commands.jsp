@@ -18,19 +18,19 @@
                                 Page</a>
                         </c:when>
                         <c:otherwise>
-                            <div class="selected">Main Page</div>
+                            <div class="nav-link active">Main Page</div>
                         </c:otherwise>
                     </c:choose>
                 </div>
                 <div class="nav-item">
                     <c:choose>
                         <c:when test="${command!='readers'}">
-                            <div class="nav-item"><a class="nav-link"
+                            <a class="nav-link"
                                                      href=${pageContext.request.contextPath}/controller?command=readers>Readers
-                                Page</a></div>
+                                Page</a>
                         </c:when>
                         <c:otherwise>
-                            <div class="selected">Readers Page</div>
+                            <div class="nav-link active">Readers Page</div>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -38,12 +38,12 @@
                 <div class="nav-item">
                     <c:choose>
                         <c:when test="${command!='search' && command!='find_book'}">
-                            <div class="nav-item"><a class="nav-link"
+                            <a class="nav-link"
                                                      href=${pageContext.request.contextPath}/controller?command=search>Search
-                                Page</a></div>
+                                Page</a>
                         </c:when>
                         <c:otherwise>
-                            <div class="selected">Search Page</div>
+                            <div class="nav-link active">Search Page</div>
                         </c:otherwise>
                     </c:choose>
                 </div>

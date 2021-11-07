@@ -7,12 +7,12 @@
 
 .modal-content {
     position: relative;
-    background-color: #06e5df;
-    margin: auto;
-    padding: 0;
-    border: 5px solid #013533;
+    background-color: #a4bace;
+    margin: 20px auto;
+    padding: 20px 0;
+    border: 5px solid #2c4d6a;
     width: 50%;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 #0d6efd61, 0 6px 20px 0 #0d6efd61;
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
@@ -28,15 +28,20 @@
     font-weight: bold;
 }
 
-.selected {
-    display: block;
-    padding: .5rem 1rem;
-    color: rgba(255,255,255,.55);
-    text-decoration: underline;
-}
-
 img {
     height: 200px;
     width: 150px;
 }
 
+.hidden {
+    display: none;
+}
+
+.removeButton {
+    text-decoration: none;
+    color: black;
+}
+
+.inline {
+    display: inline;
+}

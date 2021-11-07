@@ -10,6 +10,7 @@
 <jsp:include page="commands.jsp"/>
 <div class="container py-4">
     <c:if test="${book!=null}">
+        <div class="hidden" id="bookId">${book.id}</div>
         <form method="post" action="${pageContext.request.contextPath}/upload?bookId=${book.id}"
               enctype="multipart/form-data">
             <div>
@@ -19,7 +20,8 @@
             </div>
         </form>
     </c:if>
-    <form method="post" action="${pageContext.request.contextPath}/controller?command=update_book&bookId=${book.id}">
+    <form id="form" method="post"
+          action="${pageContext.request.contextPath}/controller?command=update_book&bookId=${book.id}">
         <h4><input required value="${book.title}" name="title" accept=".jpg, .png"> Book information page</h4>
         <p>Author<c:if test="${book.authors.size()>1}">s</c:if>:
             <input required value="${authors}" name="authors">
@@ -42,9 +44,10 @@
 
             <c:choose>
             <c:when test="${availableCount!=null && availableCount>0}">
-            <p>Available (${availableCount} out of <input required type="number"
-                                                          min="${book.totalAmount - availableCount}" max="100"
-                                                          value="${book.totalAmount}" name="totalAmount">)</p>
+            <p class="inline">Available (</p>
+            <p class="inline" id="availableCount">${availableCount}</p>
+            <p class="inline"> out of <input required type="number" min="${book.totalAmount - availableCount}" max="100"
+                                             value="${book.totalAmount}" name="totalAmount">)</p>
             </c:when>
             <c:otherwise>
             <p>Total amount - <input required type="number" min="${book.totalAmount - availableCount}" max="100"
@@ -53,18 +56,22 @@
             <p>Unavailable (expected to become available on ${availableDate})</p>
             </c:otherwise>
             </c:choose>
-            <div>
-                <input type="submit" value="Save">
-                </c:otherwise>
-                </c:choose>
-                <button onclick="window.location.href='/'">Discard</button>
-            </div>
     </form>
-    <c:if test="${book.id!=null}">
-        <jsp:include page="borrowList.jsp"/>
-        <jsp:include page="borrowModalWindow.jsp"/>
-        <button onclick="showNewModal()">Add borrow</button>
-    </c:if>
+    <div>
+        <button onclick="saveBookInfo()">Save</button>
+        </c:otherwise>
+        </c:choose>
+        <button onclick="window.location.href='/'">Discard</button>
+    </div>
+    <div>
+        <c:if test="${book.id!=null}">
+            <jsp:include page="borrowList.jsp"/>
+            <jsp:include page="borrowModalWindow.jsp"/>
+            <c:if test="${availableCount>0}">
+                <button id="addButton" onclick="showNewModal()">Add borrow</button>
+            </c:if>
+        </c:if>
+    </div>
 </div>
 </body>
 </html>

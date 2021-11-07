@@ -31,4 +31,12 @@ public class ReaderFactory {
                 .dateOfRegistration(resultSet.getDate(DATE_OF_REGISTRATION_COLUMN_NAME).toLocalDate())
                 .build();
     }
+
+    public Reader create(String email, String firstName, String lastName) {
+        return Reader.builder()
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .build();
+    }
 }

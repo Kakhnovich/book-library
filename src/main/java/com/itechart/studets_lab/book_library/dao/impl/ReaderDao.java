@@ -23,11 +23,13 @@ public class ReaderDao implements CommonDao<Reader> {
     private static final String FIND_ALL_READERS_SQL = "select * from reader";
     private static final String FIND_READERS_FOR_PAGE_SQL = "select * from reader order by first_name, last_name limit ";
     private static final String FIND_READER_BY_ID_SQL = "select * from reader where id = ";
-    private static final String FIND_READERS_EMAILS_SQL = "select email from reader";
     private static final String GET_COUNT_OF_READERS_SQL = "select count(id) AS count from reader";
     private static final String CREATE_NEW_READER_SQL = "insert into reader(first_name, last_name, email, gender, phone_number, registration_date) value (?,?,?,?,?,?)";
     private static final String UPDATE_READER_DATA_SQL = "update reader set first_name = ?, last_name = ?, email = ?, gender = ?, phone_number = ?, registration_date = ? where id = ?";
     private static final String COUNT_COLUMN_NAME = "count";
+
+    ReaderDao() {
+    }
 
     @Override
     public Optional<List<Reader>> findAll() {
@@ -79,21 +81,6 @@ public class ReaderDao implements CommonDao<Reader> {
         return Optional.empty();
     }
 
-    public Optional<List<String>> findAllEmails() {
-        try (final Connection conn = POOL.retrieveConnection();
-             final Statement statement = conn.createStatement();
-             final ResultSet resultSet = statement.executeQuery(FIND_READERS_EMAILS_SQL)) {
-            List<String> emails = new ArrayList<>();
-            while (resultSet.next()) {
-                emails.add(resultSet.getString(1));
-            }
-            return Optional.of(emails);
-        } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Readers Emails: " + e.getLocalizedMessage());
-            return Optional.empty();
-        }
-    }
-
     @Override
     public int getCountOfPages() {
         try (final Connection conn = POOL.retrieveConnection();
@@ -122,7 +109,6 @@ public class ReaderDao implements CommonDao<Reader> {
         }
     }
 
-    @Override
     public synchronized Optional<Reader> create(Reader reader) {
         try (final Connection conn = POOL.retrieveConnection();
              final PreparedStatement preparedStatement = conn.prepareStatement(CREATE_NEW_READER_SQL)) {

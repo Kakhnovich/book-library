@@ -5,14 +5,14 @@ import java.util.Objects;
 
 public class Reader {
     private final int id;
-    private final String firstName;
-    private final String lastName;
+    private String firstName;
+    private String lastName;
     private final String email;
     private final String gender;
     private final int phoneNumber;
     private final LocalDate dateOfRegistration;
 
-    public Reader(int id, String firstName, String lastName, String email, String gender, int phoneNumber, LocalDate dateOfRegistration) {
+    Reader(int id, String firstName, String lastName, String email, String gender, int phoneNumber, LocalDate dateOfRegistration) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -90,8 +90,16 @@ public class Reader {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {

@@ -15,6 +15,7 @@
             <th>Author(-s)</th>
             <th>Publish Date</th>
             <th>Available Copies</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@
                 </td>
                 <td>${book.publishDate}</td>
                 <td>${book.totalAmount}</td>
+                <td><button onclick="window.location.href='/controller?command=remove_book&bookId=${book.id}'">-</button></td>
             </tr>
         </c:forEach>
         </tbody>

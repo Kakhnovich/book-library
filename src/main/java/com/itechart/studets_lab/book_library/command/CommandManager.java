@@ -1,6 +1,7 @@
 package com.itechart.studets_lab.book_library.command;
 
 
+import com.itechart.studets_lab.book_library.command.edit_data.RemoveBook;
 import com.itechart.studets_lab.book_library.command.edit_data.SetBookData;
 import com.itechart.studets_lab.book_library.command.page.RedirectIndexPage;
 import com.itechart.studets_lab.book_library.command.page.ShowBookPage;
@@ -22,6 +23,7 @@ public enum CommandManager {
     MAIN(RedirectIndexPage.INSTANCE),
     BOOK(ShowBookPage.INSTANCE),
     UPDATE_BOOK(SetBookData.INSTANCE),
+    REMOVE_BOOK(RemoveBook.INSTANCE),
     SEARCH(ShowSearchPage.INSTANCE),
     FIND_BOOK(FindBook.INSTANCE),
     READERS(ShowReadersPage.INSTANCE),

@@ -3,6 +3,7 @@ package com.itechart.studets_lab.book_library.model;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class BorrowFactory {
     private static final BorrowFactory INSTANCE = new BorrowFactory();
@@ -33,6 +34,19 @@ public class BorrowFactory {
                 .returnDate(returnDate == null ? null : returnDate.toLocalDate())
                 .comment(resultSet.getString(COMMENT_COLUMN_NAME))
                 .status(resultSet.getString(STATUS_COLUMN_NAME))
+                .build();
+    }
+
+    public Borrow create(int id, int bookId, int readerId, LocalDate borrowDate, int duration, LocalDate returnDate, String comment, String status) {
+        return Borrow.builder()
+                .id(id)
+                .bookId(bookId)
+                .readerId(readerId)
+                .borrowDate(borrowDate)
+                .duration(duration)
+                .returnDate(returnDate)
+                .comment(comment)
+                .status(status)
                 .build();
     }
 }

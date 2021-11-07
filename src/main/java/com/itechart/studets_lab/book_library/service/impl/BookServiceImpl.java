@@ -1,6 +1,9 @@
 package com.itechart.studets_lab.book_library.service.impl;
 
 import com.itechart.studets_lab.book_library.dao.impl.BookDao;
+import com.itechart.studets_lab.book_library.dao.impl.BookDaoFactory;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowDao;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowDaoFactory;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookCriteria;
 import com.itechart.studets_lab.book_library.service.BookService;
@@ -11,9 +14,13 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
     private static final BookServiceImpl INSTANCE = new BookServiceImpl();
     private final BookDao bookDao;
+    private final BorrowDao borrowDao;
 
     private BookServiceImpl() {
-        bookDao = new BookDao();
+        BookDaoFactory bookDaoFactory = BookDaoFactory.getInstance();
+        bookDao = bookDaoFactory.getDao();
+        BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
+        borrowDao = borrowDaoFactory.getDao();
     }
 
     public static BookServiceImpl getInstance() {
@@ -62,5 +69,11 @@ public class BookServiceImpl implements BookService {
                 .filter(book -> bookCriteria.getDescription().equals("")
                         || book.getDescription().equals(bookCriteria.getDescription()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteBookWithId(int id) {
+        bookDao.delete(id);
+        borrowDao.deleteByBookId(id);
     }
 }

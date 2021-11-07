@@ -14,7 +14,4 @@ public interface CommonDao<T> {
 
     Optional<T> update(T entity);
 
-    Optional<T> create(T entity);
-
-
 }

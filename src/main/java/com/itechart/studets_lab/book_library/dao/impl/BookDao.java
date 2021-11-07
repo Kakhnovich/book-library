@@ -28,12 +28,16 @@ public class BookDao implements CommonDao<Book> {
     private static final String GET_COUNT_OF_BOOKS_SQL = "select count(id) AS count from book";
     private static final String CREATE_NEW_BOOK_SQL = "insert into book(isbn, title, publisher, publish_date, page_count, description, total_amount) value (?,?,?,?,?,?,?)";
     private static final String UPDATE_BOOK_DATA_SQL = "update book set isbn = ?, title = ?, publisher = ?, publish_date = ?, page_count = ?, description = ?, total_amount = ? where id = ?";
+    private static final String DELETE_BOOK_DATA_SQL = "delete from book where id = ";
     private static final String DELETE_BOOK_AUTHORS_SQL = "delete from book_author where book_id = ";
     private static final String DELETE_BOOK_GENRES_SQL = "delete from book_genre where book_id = ";
     private static final String ADD_BOOK_AUTHORS_SQL = "insert into book_author(book_id, author) value (?,?)";
     private static final String ADD_BOOK_GENRES_SQL = "insert into book_genre(book_id, genre) value (?,?)";
     private static final String ID_COLUMN_NAME = "id";
     private static final String COUNT_COLUMN_NAME = "count";
+
+    BookDao() {
+    }
 
     @Override
     public Optional<List<Book>> findAll() {
@@ -144,7 +148,6 @@ public class BookDao implements CommonDao<Book> {
         }
     }
 
-    @Override
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Optional<Book> create(Book book) {
         try (final Connection conn = POOL.retrieveConnection();
@@ -158,6 +161,17 @@ public class BookDao implements CommonDao<Book> {
         } catch (SQLException e) {
             LOGGER.error("SQLException while trying to create new Book: " + e.getLocalizedMessage());
             return Optional.empty();
+        }
+    }
+
+    public void delete(int id) {
+        deleteBookAuthors(id);
+        deleteBookGenres(id);
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement()) {
+            statement.executeUpdate(DELETE_BOOK_DATA_SQL + id);
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to delete Book data: " + e.getLocalizedMessage());
         }
     }
 

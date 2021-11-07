@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,13 @@ public class BorrowDao implements CommonDao<Borrow> {
     private static final String GET_COUNT_OF_BORROWS_SQL = "select count(id) AS count from borrow_record";
     private static final String CREATE_NEW_BORROW_SQL = "insert into borrow_record(book_id, reader_id, borrow_date, time_period_id, return_date, comment, status_id) value (?,?,?,?,?,?,?)";
     private static final String UPDATE_BORROW_DATA_SQL = "update borrow_record set book_id=?, reader_id=?, borrow_date=?, time_period_id=?, return_date=?, comment=?, status_id=? where id=?";
+    private static final String DELETE_BORROW_BY_BOOK_ID_SQL = "delete from borrow_record where book_id = ";
     private static final String GET_BORROW_PERIOD_ID_SQL = "select id from borrow_period where months = ";
     private static final String GET_BORROW_STATUS_ID_SQL = "select id from borrow_status where status = ";
     private static final String COUNT_COLUMN_NAME = "count";
+
+    BorrowDao() {
+    }
 
     @Override
     public Optional<List<Borrow>> findAll() {
@@ -110,16 +115,39 @@ public class BorrowDao implements CommonDao<Borrow> {
         }
     }
 
-    @Override
-    public Optional<Borrow> create(Borrow borrow) {
-        try (final Connection conn = POOL.retrieveConnection();
-             final PreparedStatement preparedStatement = conn.prepareStatement(CREATE_NEW_BORROW_SQL)) {
-            fillPreparedStatement(borrow, preparedStatement);
-            preparedStatement.execute();
-            return Optional.of(borrow);
+    public Optional<Borrow> create(Borrow borrow, int booksCount) {
+        try (final Connection conn = POOL.retrieveConnection()) {
+            conn.setAutoCommit(false);
+            Savepoint savepoint = conn.setSavepoint("savepoint");
+            try (final PreparedStatement preparedStatement = conn.prepareStatement(CREATE_NEW_BORROW_SQL)) {
+                if (!findAll().isPresent() || findAll().get().size() >= booksCount) {
+                    throw new SQLException("Not enough books to borrow");
+                }
+                fillPreparedStatement(borrow, preparedStatement);
+                preparedStatement.execute();
+                if (!findAll().isPresent() || findAll().get().size() > booksCount) {
+                    throw new SQLException("Not enough books to borrow");
+                }
+                conn.commit();
+                return Optional.of(borrow);
+            } catch (SQLException e) {
+                LOGGER.error("SQLException while trying to create new Borrow: " + e.getLocalizedMessage());
+                conn.rollback(savepoint);
+                conn.commit();
+                return Optional.empty();
+            }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to create new Borrow: " + e.getLocalizedMessage());
+            LOGGER.error("SQLException while trying to get Connection: " + e.getLocalizedMessage());
             return Optional.empty();
+        }
+    }
+
+    public void deleteByBookId(int bookId) {
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement()) {
+            statement.executeUpdate(DELETE_BORROW_BY_BOOK_ID_SQL + bookId);
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to delete " + bookId + " Book Borrows: " + e.getLocalizedMessage());
         }
     }
 
@@ -128,7 +156,7 @@ public class BorrowDao implements CommonDao<Borrow> {
         preparedStatement.setInt(2, borrow.getReaderId());
         preparedStatement.setDate(3, Date.valueOf(borrow.getBorrowDate()));
         preparedStatement.setInt(4, findTimePeriodId(borrow.getDuration()));
-        preparedStatement.setDate(5, Date.valueOf(borrow.getReturnDate()));
+        preparedStatement.setDate(5, borrow.getStatus().equals("not returned") ? null : Date.valueOf(borrow.getReturnDate()));
         preparedStatement.setString(6, borrow.getComment());
         preparedStatement.setInt(7, findStatusId(borrow.getStatus()));
     }

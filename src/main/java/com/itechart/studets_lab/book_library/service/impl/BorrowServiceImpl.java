@@ -1,7 +1,12 @@
 package com.itechart.studets_lab.book_library.service.impl;
 
+import com.itechart.studets_lab.book_library.dao.impl.BookDao;
+import com.itechart.studets_lab.book_library.dao.impl.BookDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.BorrowDao;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.ReaderDao;
+import com.itechart.studets_lab.book_library.dao.impl.ReaderDaoFactory;
+import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.Borrow;
 import com.itechart.studets_lab.book_library.model.BorrowDto;
 import com.itechart.studets_lab.book_library.service.BorrowService;
@@ -16,10 +21,15 @@ public class BorrowServiceImpl implements BorrowService {
     private static final BorrowServiceImpl INSTANCE = new BorrowServiceImpl();
     private final BorrowDao borrowDao;
     private final ReaderDao readerDao;
+    private final BookDao bookDao;
 
     private BorrowServiceImpl() {
-        borrowDao = new BorrowDao();
-        readerDao = new ReaderDao();
+        BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
+        borrowDao = borrowDaoFactory.getDao();
+        ReaderDaoFactory readerDaoFactory = ReaderDaoFactory.getInstance();
+        readerDao = readerDaoFactory.getDao();
+        BookDaoFactory bookDaoFactory = BookDaoFactory.getInstance();
+        bookDao = bookDaoFactory.getDao();
     }
 
     public static BorrowServiceImpl getInstance() {
@@ -51,8 +61,12 @@ public class BorrowServiceImpl implements BorrowService {
 
     @Override
     public BorrowDto create(Borrow borrow) {
-        Optional<Borrow> newBorrow = borrowDao.create(borrow);
-        return newBorrow.map(this::convertToDto).orElse(null);
+        Optional<Book> book = bookDao.findByKey(borrow.getBookId());
+        if (book.isPresent()) {
+            Optional<Borrow> newBorrow = borrowDao.create(borrow, book.get().getTotalAmount());
+            return newBorrow.map(this::convertToDto).orElse(null);
+        }
+        return null;
     }
 
     @Override
@@ -90,11 +104,16 @@ public class BorrowServiceImpl implements BorrowService {
         return new BorrowDto(
                 borrow.getId(),
                 borrow.getBookId(),
-                readerDao.findByKey(borrow.getId()).get(),
+                readerDao.findByKey(borrow.getReaderId()).get(),
                 borrow.getBorrowDate(),
                 borrow.getDuration(),
                 borrow.getReturnDate(),
                 borrow.getComment(),
                 borrow.getStatus());
+    }
+
+    @Override
+    public void deleteBorrowOfBook(int bookId) {
+        borrowDao.deleteByBookId(bookId);
     }
 }

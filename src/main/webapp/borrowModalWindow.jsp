@@ -12,29 +12,27 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-body">
-            <p>Reader email address - <select required name="email">
-                <c:forEach var="email" items="${emails}">
-                    <option value="${email}">${email}</option>
-                </c:forEach>
-            </select></p>
-            <%--                <p>Reader name - <input required name="name" disabled--%>
-            <%--                                        value="${borrow.reader.firstName} ${borrow.reader.secondName}"></p>--%>
-            <c:if test="${borrowInfo!=null}">
-                <p>Borrow date - <input required name="borrowDate" type="date" value="${borrowInfo.borrowDate}"></p>
-            </c:if>
+            <p class="hidden" id="borrowId"></p>
+            <p>Reader email address - <input type="search" onchange="selectReader()" id="email" required name="email"
+                                             list="emails">
+                <datalist id="emails">
+                    <c:forEach var="reader" items="${emailsMap}">
+                        <option value="${reader.key}">${reader.value}</option>
+                    </c:forEach>
+                </datalist>
+            </p>
+            <p>Reader name - <input id="name" required name="name"></p>
             <p>Time period (months) - <select required name="duration">
                 <c:forEach var="period" items="${periods}">
                     <option value="${period}">${period}</option>
                 </c:forEach>
             </select></p>
-            <c:if test="${borrowInfo.returnDate!=null}">
-                <p>Status - <select required name="status">
-                    <c:forEach var="status" items="${statuses}">
-                        <option value="${status}">${status}</option>
-                    </c:forEach>
-                </select></p>
-            </c:if>
-            <p>Comment: <input name="comment" value="${borrowInfo.comment}"></p>
+            <p id="status">Status - <select required name="status">
+                <c:forEach var="status" items="${statuses}">
+                    <option value="${status}">${status}</option>
+                </c:forEach>
+            </select></p>
+            <p>Comment: <input name="comment"></p>
             <button onclick="addTableRow()">Save</button>
             <button onclick="closeModal()">Discard</button>
         </div>

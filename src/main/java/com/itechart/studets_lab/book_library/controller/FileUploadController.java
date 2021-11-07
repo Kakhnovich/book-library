@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @WebServlet("/upload")
-@MultipartConfig(maxFileSize = 1024*1024*2)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 2)
 public class FileUploadController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

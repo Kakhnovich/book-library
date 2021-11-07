@@ -13,4 +13,6 @@ public interface BorrowService extends CommonService<BorrowDto, Borrow> {
     List<Integer> findAllPeriods();
 
     List<String> findAllStatuses();
+
+    void deleteBorrowOfBook(int bookId);
 }

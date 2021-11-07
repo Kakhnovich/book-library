@@ -16,6 +16,7 @@ import com.itechart.studets_lab.book_library.service.impl.ReaderServiceImpl;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum ShowBookPage implements Command {
     INSTANCE;
@@ -27,7 +28,7 @@ public enum ShowBookPage implements Command {
     private static final String BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME = "availableCount";
     private static final String AVAILABLE_DATE_ATTRIBUTE_NAME = "availableDate";
     private static final String BOOK_BORROWS_ATTRIBUTE_NAME = "borrows";
-    private static final String EMAILS_ATTRIBUTE_NAME = "emails";
+    private static final String EMAILS_MAP_ATTRIBUTE_NAME = "emailsMap";
     private static final String STATUS_ATTRIBUTE_NAME = "statuses";
     private static final String PERIODS_ATTRIBUTE_NAME = "periods";
     private static final String EMPTY_ATTRIBUTE_VALUE = "null";
@@ -54,20 +55,22 @@ public enum ShowBookPage implements Command {
         request.setAttribute(BOOK_GENRES_ATTRIBUTE_NAME, parseList(book.getGenres()));
         List<BorrowDto> borrows = borrowService.findBorrowsOfBook(book.getId());
         if (!borrows.isEmpty()) {
-            request.setAttribute(BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME, book.getTotalAmount() - borrows.size());
+            request.setAttribute(BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME, book.getTotalAmount() - borrows.stream().filter(borrow -> borrow.getReturnDate() == null).count());
             request.setAttribute(BOOK_BORROWS_ATTRIBUTE_NAME, borrows);
             request.setAttribute(AVAILABLE_DATE_ATTRIBUTE_NAME, getAvailableDate(borrows));
         } else {
             request.setAttribute(BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME, book.getTotalAmount());
         }
-        request.setAttribute(EMAILS_ATTRIBUTE_NAME, readerService.findAllEmails());
+        request.setAttribute(EMAILS_MAP_ATTRIBUTE_NAME, readerService.findEmailsWithNames());
         request.setAttribute(PERIODS_ATTRIBUTE_NAME, borrowService.findAllPeriods());
         request.setAttribute(STATUS_ATTRIBUTE_NAME, borrowService.findAllStatuses());
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private LocalDate getAvailableDate(List<BorrowDto> borrows) {
-        Comparator<BorrowDto> comparator = Comparator.comparing(o -> o.getReturnDate().plusMonths(o.getDuration()));
+        Comparator<BorrowDto> comparator = Comparator.comparing(o -> o.getBorrowDate().plusMonths(o.getDuration()));
+        if (borrows.isEmpty()) {
+            return LocalDate.now();
+        }
         BorrowDto borrow = borrows.stream().min(comparator).get();
         return borrow.getBorrowDate().plusMonths(borrow.getDuration());
     }

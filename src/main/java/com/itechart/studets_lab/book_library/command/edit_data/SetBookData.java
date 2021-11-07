@@ -6,8 +6,16 @@ import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.page.RedirectIndexPage;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookFactory;
+import com.itechart.studets_lab.book_library.model.Borrow;
+import com.itechart.studets_lab.book_library.model.BorrowDto;
+import com.itechart.studets_lab.book_library.model.BorrowFactory;
 import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.BorrowService;
+import com.itechart.studets_lab.book_library.service.ReaderService;
 import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
+import com.itechart.studets_lab.book_library.service.impl.BorrowServiceImpl;
+import com.itechart.studets_lab.book_library.service.impl.ReaderServiceImpl;
+import com.itechart.studets_lab.book_library.service.parser.BorrowParser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +37,11 @@ public enum SetBookData implements Command {
     private static final String PAGE_COUNT_PARAMETER_NAME = "pageCount";
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String TOTAL_AMOUNT_PARAMETER_NAME = "totalAmount";
+    private static final String BORROWS_PARAMETER_NAME = "borrows";
     private final BookService bookService = BookServiceImpl.getInstance();
+    private final BorrowService borrowService = BorrowServiceImpl.getInstance();
+    private final ReaderService readerService = ReaderServiceImpl.getInstance();
+    private final BorrowParser borrowParser = BorrowParser.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {
@@ -39,6 +51,19 @@ public enum SetBookData implements Command {
             bookService.create(book);
         } else {
             bookService.update(book);
+        }
+        String borrowsData = String.valueOf(request.getParameter(BORROWS_PARAMETER_NAME));
+        if (!borrowsData.equals("null") && !borrowsData.equals("")) {
+            List<BorrowDto> borrows = borrowParser.parseString(borrowsData);
+            for (BorrowDto borrowDto : borrows) {
+                Borrow borrow = convertFromDto(borrowDto);
+                if (borrow.getId() == 0) {
+                    borrowService.create(borrow);
+                } else {
+                    borrowService.update(borrow);
+                }
+                readerService.update(borrowDto.getReader());
+            }
         }
         return RedirectIndexPage.INSTANCE.execute(request);
     }
@@ -62,5 +87,10 @@ public enum SetBookData implements Command {
 
     private List<String> parseString(String data) {
         return Arrays.stream(data.trim().split(" ")).filter(word -> word.length() > 0).distinct().collect(Collectors.toList());
+    }
+
+    private Borrow convertFromDto(BorrowDto borrowDto) {
+        return BorrowFactory.getInstance().create(borrowDto.getId(), borrowDto.getBookId(), borrowDto.getReader().getId(),
+                borrowDto.getBorrowDate(), borrowDto.getDuration(), borrowDto.getReturnDate(), borrowDto.getComment(), borrowDto.getStatus());
     }
 }

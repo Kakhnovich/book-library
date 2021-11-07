@@ -1,19 +1,21 @@
 package com.itechart.studets_lab.book_library.service.impl;
 
 import com.itechart.studets_lab.book_library.dao.impl.ReaderDao;
+import com.itechart.studets_lab.book_library.dao.impl.ReaderDaoFactory;
 import com.itechart.studets_lab.book_library.model.Reader;
-import com.itechart.studets_lab.book_library.service.CommonService;
 import com.itechart.studets_lab.book_library.service.ReaderService;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class ReaderServiceImpl implements ReaderService {
     private static final ReaderServiceImpl INSTANCE = new ReaderServiceImpl();
     private final ReaderDao readerDao;
 
     private ReaderServiceImpl() {
-        readerDao = new ReaderDao();
+        ReaderDaoFactory readerDaoFactory = ReaderDaoFactory.getInstance();
+        readerDao = readerDaoFactory.getDao();
     }
 
     public static ReaderServiceImpl getInstance() {
@@ -51,7 +53,18 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public List<String> findAllEmails() {
-        return readerDao.findAllEmails().orElse(new ArrayList<>());
+    public HashMap<String, String> findEmailsWithNames() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        List<Reader> readers = findAll();
+        for (Reader reader : readers) {
+            hashMap.put(reader.getEmail(), reader.getFirstName() + ' ' + reader.getLastName());
+        }
+        return hashMap;
+    }
+
+    @Override
+    public Reader findReaderByEmail(String email) {
+        Optional<Reader> reader = findAll().stream().filter(user -> user.getEmail().equals(email)).findFirst();
+        return reader.orElse(null);
     }
 }
