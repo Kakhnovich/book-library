@@ -25,7 +25,7 @@
                     <td>${reader.firstName} ${reader.lastName}</td>
                     <td>${reader.email}</td>
                     <td>${reader.dateOfRegistration}</td>
-                    <td>${reader.phoneNumber}</td>
+                    <td><c:if test="${reader.phoneNumber!=0}">${reader.phoneNumber}</c:if></td>
                 </tr>
             </c:forEach>
             </tbody>

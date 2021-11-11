@@ -11,7 +11,4 @@ public interface CommonDao<T> {
     int getCountOfPages();
 
     Optional<List<T>> findByPageNumber(int page);
-
-    Optional<T> update(T entity);
-
 }

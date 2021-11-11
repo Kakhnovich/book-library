@@ -13,7 +13,6 @@ import java.io.InputStream;
 public class FileReader {
     private static final FileReader INSTANCE = new FileReader();
     private static final Logger LOGGER = LogManager.getLogger(FileReader.class);
-//    private static final String OUTPUT_STREAM_PATH = "target/BookLibrary-1.0-SNAPSHOT/img/";
 
     FileReader() {
     }
@@ -23,7 +22,7 @@ public class FileReader {
             InputStream in = new BoundedInputStream(filePart.getInputStream());
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[1024];
-            int n = 0;
+            int n;
             while (-1 != (n = in.read(buf))) {
                 out.write(buf, 0, n);
             }

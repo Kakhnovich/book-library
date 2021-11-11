@@ -45,3 +45,11 @@ img {
 .inline {
     display: inline;
 }
+
+.form-control {
+    margin: 5px 0;
+}
+
+.error {
+    color: #6e0012;
+}

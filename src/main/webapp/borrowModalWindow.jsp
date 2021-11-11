@@ -14,7 +14,7 @@
         <div class="modal-body">
             <p class="hidden" id="borrowId"></p>
             <p>Reader email address - <input type="search" onchange="selectReader()" id="email" required name="email"
-                                             list="emails">
+                                             list="emails" autocomplete="off">
                 <datalist id="emails">
                     <c:forEach var="reader" items="${emailsMap}">
                         <option value="${reader.key}">${reader.value}</option>

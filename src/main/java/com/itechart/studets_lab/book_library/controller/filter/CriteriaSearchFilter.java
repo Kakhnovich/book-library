@@ -36,10 +36,14 @@ public class CriteriaSearchFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         final String command = String.valueOf(servletRequest.getParameter(COMMAND_PARAMETER_NAME));
         if (command.equals(FIND_COMMAND_VALUE)) {
-            if (servletRequest.getParameter(TITLE_PARAMETER_NAME).isEmpty() &&
-                    servletRequest.getParameter(AUTHORS_PARAMETER_NAME).isEmpty() &&
-                    servletRequest.getParameter(GENRES_PARAMETER_NAME).isEmpty() &&
-                    servletRequest.getParameter(DESCRIPTION_PARAMETER_NAME).isEmpty()) {
+            final String title = String.valueOf(servletRequest.getParameter(TITLE_PARAMETER_NAME)).trim();
+            final String authors = String.valueOf(servletRequest.getParameter(AUTHORS_PARAMETER_NAME)).trim();
+            final String genres = String.valueOf(servletRequest.getParameter(GENRES_PARAMETER_NAME)).trim();
+            final String description = String.valueOf(servletRequest.getParameter(DESCRIPTION_PARAMETER_NAME)).trim();
+            if ((title.isEmpty() || title.equals("null")) &&
+                    (authors.isEmpty() || authors.equals("null")) &&
+                    (genres.isEmpty() || genres.equals("null")) &&
+                    (description.isEmpty() || description.equals("null"))) {
                 final RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(page);
                 servletRequest.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);
                 servletRequest.setAttribute(COMMAND_PARAMETER_NAME, command);

@@ -5,6 +5,8 @@
     <title>Book Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link href="styles/style.css" rel="stylesheet">
+    <script src="js/createBook.js"></script>
 </head>
 <body>
 <jsp:include page="commands.jsp"/>
@@ -32,7 +34,7 @@
             <input required value="${genres}" name="genres">
         </p>
         <p>Page count - <input required type="number" min="1" max="1000" value="${book.pageCount}" name="pageCount"></p>
-        <p>ISBN - <input required type="number" min="1" max="1_000_000_000_000_000" value="${book.isbn}" name="isbn">
+        <p>ISBN - <input required type="number" min="1" max="1_000_000_000" value="${book.isbn}" name="isbn">
         </p>
         <p>Description: <input value="${book.description}" name="description"></p>
         <c:choose>
@@ -50,6 +52,7 @@
                                              value="${book.totalAmount}" name="totalAmount">)</p>
             </c:when>
             <c:otherwise>
+            <p class="hidden" id="availableCount">${availableCount}</p>
             <p>Total amount - <input required type="number" min="${book.totalAmount - availableCount}" max="100"
                                      value="${book.totalAmount}"
                                      name="totalAmount"></p>
@@ -63,15 +66,16 @@
         </c:choose>
         <button onclick="window.location.href='/'">Discard</button>
     </div>
+    <div class="error"><p>${errorMsg}</p></div>
+    <div class="error"><p>${bookErrorMsg}</p></div>
     <div>
         <c:if test="${book.id!=null}">
             <jsp:include page="borrowList.jsp"/>
             <jsp:include page="borrowModalWindow.jsp"/>
-            <c:if test="${availableCount>0}">
-                <button id="addButton" onclick="showNewModal()">Add borrow</button>
-            </c:if>
+            <button <c:if test="${availableCount==0}">class="hidden" </c:if> id="addButton" onclick="showNewModal()">Add borrow</button>
         </c:if>
     </div>
+    <div class="error"><p>${borrowsErrorMsg}</p></div>
 </div>
 </body>
 </html>

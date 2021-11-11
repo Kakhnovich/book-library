@@ -38,8 +38,10 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public Reader create(Reader reader) {
-        return readerDao.create(reader).orElse(null);
+        Optional<Reader> newReader = readerDao.create(reader);
+        return newReader.map(value -> readerDao.findByEmail(value.getEmail()).get()).orElse(null);
     }
 
     @Override

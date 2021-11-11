@@ -2,10 +2,12 @@ let form;
 let modal;
 let statusField;
 let email;
+let dataList;
 let name;
 let duration;
 let status;
 let comment;
+let tableDiv;
 let tableRef;
 let borrows = [];
 let bookId;
@@ -24,6 +26,9 @@ window.onload = function () {
     modal = document.getElementById('myModal');
     statusField = document.getElementById('status');
     email = document.getElementById('email');
+    dataList = email.list;
+    dataList.id = "anyId";
+    email.addEventListener('keyup', () => setSearchList());
     name = document.getElementById('name');
     duration = document.getElementsByName('duration')[0];
     status = document.getElementsByName('status')[0];
@@ -33,10 +38,12 @@ window.onload = function () {
     totalAmount = document.getElementsByName("totalAmount")[0];
     availableCount = document.getElementById('availableCount');
     addButton = document.getElementById("addButton");
+    tableDiv = document.getElementById("tableDiv");
     tableRef = document.getElementsByClassName("table")[0];
     for (let row of tableRef.lastElementChild.rows) {
         addBorrow(row);
     }
+    setMaxPublishDate();
 }
 
 function addBorrow(row) {
@@ -70,9 +77,12 @@ function showModal(rowNumber) {
     actualRow = rowNumber;
     borrowId.innerText = borrows[rowNumber].id;
     email.value = borrows[rowNumber].readerEmail;
-    name.value = borrows[rowNumber].readerName;
+    email.readOnly = true;
+    name.value = borrows[rowNumber].readerName.trim();
+    name.readOnly = true;
     status.value = borrows[rowNumber].status;
     duration.value = borrows[rowNumber].duration;
+    duration.disabled = true;
     comment.value = borrows[rowNumber].comment;
     console.log("showModal()");
     statusField.style.display = 'block';
@@ -82,9 +92,12 @@ function showModal(rowNumber) {
 function showNewModal() {
     borrowId.innerText = '';
     email.value = '';
+    email.readOnly = false;
     name.value = '';
+    name.readOnly = false;
     status.selectedIndex = 0;
     duration.selectedIndex = 0;
+    duration.disabled = false;
     comment.value = '';
     console.log("showNewModal()");
     statusField.style.display = 'none';
@@ -97,11 +110,12 @@ function closeModal() {
 }
 
 function addTableRow() {
-    let newCell1 = tableRef.lastElementChild["rows"][actualRow].cells[1];
-    let newCell2 = tableRef.lastElementChild["rows"][actualRow].cells[2];
-    let newCell3 = tableRef.lastElementChild["rows"][actualRow].cells[3];
-    let newCell4 = tableRef.lastElementChild["rows"][actualRow].cells[4];
-    let newCell5 = tableRef.lastElementChild["rows"][actualRow].cells[5];
+    tableDiv.style.display = "block";
+    let newCell1;
+    let newCell2;
+    let newCell3;
+    let newCell4;
+    let newCell5;
     if (borrowId.innerText === '') {
         let newRowId = tableRef.lastElementChild["rows"].length + 1;
         actualRow = newRowId - 1;
@@ -113,6 +127,12 @@ function addTableRow() {
         newCell3 = newRow.insertCell(3);
         newCell4 = newRow.insertCell(4);
         newCell5 = newRow.insertCell(5);
+    } else {
+        newCell1 = tableRef.lastElementChild["rows"][actualRow].cells[1];
+        newCell2 = tableRef.lastElementChild["rows"][actualRow].cells[2];
+        newCell3 = tableRef.lastElementChild["rows"][actualRow].cells[3];
+        newCell4 = tableRef.lastElementChild["rows"][actualRow].cells[4];
+        newCell5 = tableRef.lastElementChild["rows"][actualRow].cells[5];
     }
     newCell1.innerHTML = email.value;
     if (borrowId.innerText === '' || status.value === 'not returned') {
@@ -151,7 +171,7 @@ function addTableRow() {
             activeBorrowsCount++;
         }
     }
-    if(totalAmount.value<activeBorrowsCount){
+    if (totalAmount.value < activeBorrowsCount) {
         totalAmount.value = activeBorrowsCount;
     }
     availableCount.innerText = (Number(totalAmount.value) - activeBorrowsCount);
@@ -198,4 +218,12 @@ function saveBookInfo() {
     input.setAttribute('value', borrows.toString());
     form.appendChild(input);
     form.submit();
+}
+
+function setSearchList() {
+    if (email.value.length < 3) {
+        dataList.id = "anyId";
+    } else {
+        dataList.id = "emails";
+    }
 }

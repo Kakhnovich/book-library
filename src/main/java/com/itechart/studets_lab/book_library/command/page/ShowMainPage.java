@@ -4,7 +4,7 @@ import com.itechart.studets_lab.book_library.command.Command;
 import com.itechart.studets_lab.book_library.command.RequestContext;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.UrlPatterns;
-import com.itechart.studets_lab.book_library.model.Book;
+import com.itechart.studets_lab.book_library.model.BookDto;
 import com.itechart.studets_lab.book_library.model.BorrowDto;
 import com.itechart.studets_lab.book_library.service.BookService;
 import com.itechart.studets_lab.book_library.service.BorrowService;
@@ -33,9 +33,9 @@ public enum ShowMainPage implements Command {
         final int pageNumber = (page.equals("null")) ? 1 : Integer.parseInt(page);
         request.setAttribute(PAGE_PARAMETER_NAME, pageNumber);
         request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, bookService.getCountOfPages());
-        List<Book> books = bookService.findByPage(pageNumber);
+        List<BookDto> books = bookService.findByPage(pageNumber);
         if (!books.isEmpty()) {
-            List<Book> bookList;
+            List<BookDto> bookList;
             String sortValue = String.valueOf(request.getParameter(SORT_PARAMETER_NAME));
             request.setAttribute(SORT_PARAMETER_NAME, sortValue);
             if (sortValue.equals(SORT_PARAMETER_ACCEPT_VALUE)) {
@@ -48,9 +48,11 @@ public enum ShowMainPage implements Command {
         return MAIN_PAGE_RESPONSE;
     }
 
-    private List<Book> createListOfAvailableBooks(List<Book> books) {
-        for (Book book : books) {
-            List<BorrowDto> borrows = borrowService.findBorrowsOfBook(book.getIsbn());
+    private List<BookDto> createListOfAvailableBooks(List<BookDto> books) {
+        for (BookDto book : books) {
+            List<BorrowDto> borrows = borrowService.findBorrowsOfBook(book.getId()).stream()
+                    .filter(borrow -> borrow.getReturnDate() == null)
+                    .collect(Collectors.toList());
             book.setTotalAmount(book.getTotalAmount() - borrows.size());
         }
         return books;

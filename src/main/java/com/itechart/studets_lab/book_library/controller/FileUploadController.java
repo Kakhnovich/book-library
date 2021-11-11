@@ -3,7 +3,7 @@ package com.itechart.studets_lab.book_library.controller;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.WrappingRequestContext;
 import com.itechart.studets_lab.book_library.command.page.ShowBookPage;
-import com.itechart.studets_lab.book_library.model.Book;
+import com.itechart.studets_lab.book_library.model.BookDto;
 import com.itechart.studets_lab.book_library.service.BookService;
 import com.itechart.studets_lab.book_library.service.cover.FileReader;
 import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
@@ -42,7 +42,7 @@ public class FileUploadController extends HttpServlet {
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
         String coverPath = FileReader.getInstance().read(packagePath, filePart, fileName);
         int bookId = Integer.parseInt(String.valueOf(req.getParameter(BOOK_ID_PARAMETER_NAME)));
-        Book book = bookService.findByKey(bookId);
+        BookDto book = bookService.findByKey(bookId);
         book.setCoverLink(coverPath);
         bookService.update(book);
         final ResponseContext result = ShowBookPage.INSTANCE.execute(WrappingRequestContext.of(req));

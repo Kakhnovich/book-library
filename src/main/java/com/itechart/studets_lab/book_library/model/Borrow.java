@@ -8,20 +8,20 @@ public class Borrow {
     private final int bookId;
     private final int readerId;
     private final LocalDate borrowDate;
-    private final int duration;
+    private final int durationId;
     private final LocalDate returnDate;
     private final String comment;
-    private final String status;
+    private final int statusId;
 
-    Borrow(int id, int bookId, int readerId, LocalDate borrowDate, int duration, LocalDate returnDate, String comment, String status) {
+    Borrow(int id, int bookId, int readerId, LocalDate borrowDate, int durationId, LocalDate returnDate, String comment, int statusId) {
         this.id = id;
         this.bookId = bookId;
         this.readerId = readerId;
         this.borrowDate = borrowDate;
-        this.duration = duration;
+        this.durationId = durationId;
         this.returnDate = returnDate;
         this.comment = comment;
-        this.status = status;
+        this.statusId = statusId;
     }
 
     static class BorrowBuilder {
@@ -29,10 +29,10 @@ public class Borrow {
         private int bookId;
         private int readerId;
         private LocalDate borrowDate;
-        private int duration;
+        private int durationId;
         private LocalDate returnDate;
         private String comment;
-        private String status;
+        private int statusId;
 
         public BorrowBuilder id(int id) {
             this.id = id;
@@ -54,8 +54,8 @@ public class Borrow {
             return this;
         }
 
-        public BorrowBuilder duration(int duration) {
-            this.duration = duration;
+        public BorrowBuilder durationId(int durationId) {
+            this.durationId = durationId;
             return this;
         }
 
@@ -69,8 +69,8 @@ public class Borrow {
             return this;
         }
 
-        public BorrowBuilder status(String status) {
-            this.status = status;
+        public BorrowBuilder statusId(int statusId){
+            this.statusId = statusId;
             return this;
         }
 
@@ -80,10 +80,10 @@ public class Borrow {
                     this.bookId,
                     this.readerId,
                     this.borrowDate,
-                    this.duration,
+                    this.durationId,
                     this.returnDate,
                     this.comment,
-                    this.status);
+                    this.statusId);
         }
     }
 
@@ -107,8 +107,8 @@ public class Borrow {
         return borrowDate;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getDurationId() {
+        return durationId;
     }
 
     public LocalDate getReturnDate() {
@@ -119,8 +119,8 @@ public class Borrow {
         return comment;
     }
 
-    public String getStatus() {
-        return status;
+    public int getStatusId() {
+        return statusId;
     }
 
     @Override
@@ -128,12 +128,12 @@ public class Borrow {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Borrow borrow = (Borrow) o;
-        return bookId == borrow.bookId && duration == borrow.duration && readerId == borrow.readerId && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && Objects.equals(status, borrow.status);
+        return bookId == borrow.bookId && readerId == borrow.readerId && durationId == borrow.durationId && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && statusId==borrow.statusId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookId, readerId, borrowDate, duration, returnDate, comment, status);
+        return Objects.hash(bookId, readerId, borrowDate, durationId, returnDate, comment, statusId);
     }
 
     @Override
@@ -143,10 +143,10 @@ public class Borrow {
                 ", bookId: " + bookId +
                 ", reader: " + readerId +
                 ", borrowDate: " + borrowDate +
-                ", duration: " + duration +
+                ", durationId: " + durationId +
                 ", returnDate: " + returnDate +
                 ", comment: '" + comment + '\'' +
-                ", status: '" + status + '\'' +
+                ", statusId: " + statusId +
                 '}';
     }
 }

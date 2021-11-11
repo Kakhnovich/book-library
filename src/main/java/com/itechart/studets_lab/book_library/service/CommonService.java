@@ -1,7 +1,5 @@
 package com.itechart.studets_lab.book_library.service;
 
-import com.itechart.studets_lab.book_library.model.Book;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +11,9 @@ public interface CommonService<T, K> {
 
     T findByKey(int key);
 
-    T create(K entity);
+    T create(T entity);
 
-    T update(K entity);
+    T update(T entity);
 
     int getCountOfPages();
 

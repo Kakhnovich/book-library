@@ -6,8 +6,8 @@
     <script src="js/modal.js"></script>
 </head>
 <body>
-<c:if test="${not empty borrows}">
-    <c:set var="rowNumber" value="0"/>
+<c:set var="rowNumber" value="0"/>
+<div id="tableDiv" <c:if test="${empty borrows}">class="hidden"</c:if>>
     <div class="table-responsive">
         <table id="table" class="table table-striped table-sm" border="2">
             <thead>
@@ -25,8 +25,9 @@
                     <td class="hidden">${borrow.id}</td>
                     <td>${borrow.reader.email}</td>
                     <td><c:choose>
-                        <c:when test="${borrow.status=='not returned'}"><a href="#" onclick="showModal(${rowNumber})">
-                                ${borrow.reader.firstName} ${borrow.reader.lastName}</a></c:when>
+                        <c:when test="${borrow.status=='not returned'}">
+                            <a href="#"
+                               onclick="showModal(${rowNumber})">${borrow.reader.firstName} ${borrow.reader.lastName}</a></c:when>
                         <c:otherwise>${borrow.reader.firstName} ${borrow.reader.lastName}</c:otherwise>
                     </c:choose></td>
                     <td>${borrow.borrowDate}</td>
@@ -40,6 +41,6 @@
             </tbody>
         </table>
     </div>
-</c:if>
+</div>
 </body>
 </html>

@@ -3,17 +3,16 @@ package com.itechart.studets_lab.book_library.model;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 public class BorrowFactory {
     private static final BorrowFactory INSTANCE = new BorrowFactory();
     private static final String ID_COLUMN_NAME = "id";
     private static final String BOOK_ID_COLUMN_NAME = "book_id";
     private static final String BORROW_DATE_COLUMN_NAME = "borrow_date";
-    private static final String DURATION_COLUMN_NAME = "time_period";
+    private static final String DURATION_COLUMN_NAME = "time_period_id";
     private static final String RETURN_DATE_COLUMN_NAME = "return_date";
     private static final String COMMENT_COLUMN_NAME = "comment";
-    private static final String STATUS_COLUMN_NAME = "status";
+    private static final String STATUS_COLUMN_NAME = "status_id";
     private static final String READER_ID_COLUMN_NAME = "reader_id";
 
     private BorrowFactory() {
@@ -30,23 +29,23 @@ public class BorrowFactory {
                 .bookId(resultSet.getInt(BOOK_ID_COLUMN_NAME))
                 .readerId(resultSet.getInt(READER_ID_COLUMN_NAME))
                 .borrowDate(resultSet.getDate(BORROW_DATE_COLUMN_NAME).toLocalDate())
-                .duration(resultSet.getInt(DURATION_COLUMN_NAME))
+                .durationId(resultSet.getInt(DURATION_COLUMN_NAME))
                 .returnDate(returnDate == null ? null : returnDate.toLocalDate())
                 .comment(resultSet.getString(COMMENT_COLUMN_NAME))
-                .status(resultSet.getString(STATUS_COLUMN_NAME))
+                .statusId(resultSet.getInt(STATUS_COLUMN_NAME))
                 .build();
     }
 
-    public Borrow create(int id, int bookId, int readerId, LocalDate borrowDate, int duration, LocalDate returnDate, String comment, String status) {
+    public Borrow create(BorrowDto borrowDto, int durationId, int statusId) {
         return Borrow.builder()
-                .id(id)
-                .bookId(bookId)
-                .readerId(readerId)
-                .borrowDate(borrowDate)
-                .duration(duration)
-                .returnDate(returnDate)
-                .comment(comment)
-                .status(status)
+                .id(borrowDto.getId())
+                .bookId(borrowDto.getBookId())
+                .readerId(borrowDto.getReader().getId())
+                .borrowDate(borrowDto.getBorrowDate())
+                .durationId(durationId)
+                .returnDate(borrowDto.getReturnDate())
+                .comment(borrowDto.getComment())
+                .statusId(statusId)
                 .build();
     }
 }

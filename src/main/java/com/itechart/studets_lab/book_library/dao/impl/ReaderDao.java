@@ -23,6 +23,7 @@ public class ReaderDao implements CommonDao<Reader> {
     private static final String FIND_ALL_READERS_SQL = "select * from reader";
     private static final String FIND_READERS_FOR_PAGE_SQL = "select * from reader order by first_name, last_name limit ";
     private static final String FIND_READER_BY_ID_SQL = "select * from reader where id = ";
+    private static final String FIND_READER_BY_EMAIL_SQL = "select * from reader where email = ";
     private static final String GET_COUNT_OF_READERS_SQL = "select count(id) AS count from reader";
     private static final String CREATE_NEW_READER_SQL = "insert into reader(first_name, last_name, email, gender, phone_number, registration_date) value (?,?,?,?,?,?)";
     private static final String UPDATE_READER_DATA_SQL = "update reader set first_name = ?, last_name = ?, email = ?, gender = ?, phone_number = ?, registration_date = ? where id = ?";
@@ -71,12 +72,25 @@ public class ReaderDao implements CommonDao<Reader> {
     public Optional<Reader> findByKey(int id) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
-             final ResultSet resultSet = statement.executeQuery(FIND_READER_BY_ID_SQL + '\'' + id + '\'')) {
+             final ResultSet resultSet = statement.executeQuery(FIND_READER_BY_ID_SQL + id)) {
             if (resultSet.next()) {
                 return Optional.of(retrieveReaderData(resultSet));
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException while trying to find Reader by Email: " + e.getLocalizedMessage());
+            LOGGER.error("SQLException while trying to find Reader by id " + id + ": " + e.getLocalizedMessage());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Reader> findByEmail(String email) {
+        try (final Connection conn = POOL.retrieveConnection();
+             final Statement statement = conn.createStatement();
+             final ResultSet resultSet = statement.executeQuery(FIND_READER_BY_EMAIL_SQL + '\'' + email + '\'')) {
+            if (resultSet.next()) {
+                return Optional.of(retrieveReaderData(resultSet));
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException while trying to find Reader by Email " + email + ": " + e.getLocalizedMessage());
         }
         return Optional.empty();
     }
@@ -95,7 +109,6 @@ public class ReaderDao implements CommonDao<Reader> {
         return 0;
     }
 
-    @Override
     public Optional<Reader> update(Reader reader) {
         try (final Connection conn = POOL.retrieveConnection();
              final PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_READER_DATA_SQL)) {

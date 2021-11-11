@@ -27,9 +27,9 @@ public class Reader {
         private String firstName;
         private String lastName;
         private String email;
-        private String gender;
+        private String gender = "";
         private int phoneNumber;
-        private LocalDate dateOfRegistration;
+        private LocalDate dateOfRegistration = LocalDate.now();
 
         public ReaderBuilder id(int id) {
             this.id = id;

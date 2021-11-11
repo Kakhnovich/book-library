@@ -4,7 +4,7 @@ import com.itechart.studets_lab.book_library.command.Command;
 import com.itechart.studets_lab.book_library.command.RequestContext;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.UrlPatterns;
-import com.itechart.studets_lab.book_library.model.Book;
+import com.itechart.studets_lab.book_library.model.BookDto;
 import com.itechart.studets_lab.book_library.model.BorrowDto;
 import com.itechart.studets_lab.book_library.service.BookService;
 import com.itechart.studets_lab.book_library.service.BorrowService;
@@ -16,7 +16,6 @@ import com.itechart.studets_lab.book_library.service.impl.ReaderServiceImpl;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public enum ShowBookPage implements Command {
     INSTANCE;
@@ -42,14 +41,14 @@ public enum ShowBookPage implements Command {
     public ResponseContext execute(RequestContext request) {
         String id = String.valueOf(request.getParameter(ID_PARAMETER_NAME));
         final int bookId = (EMPTY_ATTRIBUTE_VALUE.equals(id)) ? 0 : Integer.parseInt(id);
-        Book book = bookService.findByKey(bookId);
+        BookDto book = bookService.findByKey(bookId);
         if (book != null) {
             setRequestAttributes(request, book);
         }
         return BOOK_PAGE_RESPONSE;
     }
 
-    private void setRequestAttributes(RequestContext request, Book book) {
+    private void setRequestAttributes(RequestContext request, BookDto book) {
         request.setAttribute(BOOK_ATTRIBUTE_NAME, book);
         request.setAttribute(BOOK_AUTHORS_ATTRIBUTE_NAME, parseList(book.getAuthors()));
         request.setAttribute(BOOK_GENRES_ATTRIBUTE_NAME, parseList(book.getGenres()));

@@ -4,15 +4,20 @@ import com.itechart.studets_lab.book_library.command.Command;
 import com.itechart.studets_lab.book_library.command.RequestContext;
 import com.itechart.studets_lab.book_library.command.ResponseContext;
 import com.itechart.studets_lab.book_library.command.page.ShowSearchPage;
-import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.BookCriteria;
+import com.itechart.studets_lab.book_library.model.BookDto;
+import com.itechart.studets_lab.book_library.model.BorrowDto;
 import com.itechart.studets_lab.book_library.service.BookService;
+import com.itechart.studets_lab.book_library.service.BorrowService;
 import com.itechart.studets_lab.book_library.service.impl.BookServiceImpl;
+import com.itechart.studets_lab.book_library.service.impl.BorrowServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum FindBook implements Command {
     INSTANCE;
@@ -24,32 +29,36 @@ public enum FindBook implements Command {
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
     private static final String PAGE_PARAMETER_NAME = "page";
     private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
+    private static final String ERROR_ATTRIBUTE_NAME = "errorMsg";
+    private static final String ERROR_ATTRIBUTE_VALUE = "No any books for this criteria!";
     private final BookService bookService = BookServiceImpl.getInstance();
+    private final BorrowService borrowService = BorrowServiceImpl.getInstance();
 
     @Override
     public ResponseContext execute(RequestContext request) {
-        final String title = String.valueOf(request.getParameter(TITLE_PARAMETER_NAME));
-        final String authors = String.valueOf(request.getParameter(AUTHORS_PARAMETER_NAME));
-        final String genres = String.valueOf(request.getParameter(GENRES_PARAMETER_NAME));
-        final String description = String.valueOf(request.getParameter(DESCRIPTION_PARAMETER_NAME));
+        final String title = String.valueOf(request.getParameter(TITLE_PARAMETER_NAME)).trim();
+        final String authors = String.valueOf(request.getParameter(AUTHORS_PARAMETER_NAME)).trim();
+        final String genres = String.valueOf(request.getParameter(GENRES_PARAMETER_NAME)).trim();
+        final String description = String.valueOf(request.getParameter(DESCRIPTION_PARAMETER_NAME)).trim();
         final BookCriteria bookCriteria = createCriteria(title, authors, genres, description);
-        List<Book> books = bookService.findByCriteria(bookCriteria);
+        List<BookDto> books = bookService.findByCriteria(bookCriteria);
         String page = String.valueOf(request.getParameter(PAGE_PARAMETER_NAME));
         final int pageNumber = (page.equals("null")) ? 1 : Integer.parseInt(page);
         request.setAttribute(PAGE_PARAMETER_NAME, pageNumber);
-        if (!books.isEmpty()) {
+        if (books.isEmpty()){
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);
+        } else {
             request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, books.size() % 10 + 1);
-            List<Book> rezList = new ArrayList<>();
+            List<BookDto> rezList = new ArrayList<>();
             for (int i = 10 * (pageNumber - 1); i < 10 * pageNumber && i < books.size(); i++) {
                 rezList.add(books.get(i));
             }
-            request.setAttribute(BOOKS_PARAMETER_NAME, rezList);
+            request.setAttribute(BOOKS_PARAMETER_NAME, createListOfAvailableBooks(rezList));
         }
         return ShowSearchPage.INSTANCE.execute(request);
     }
 
     private BookCriteria createCriteria(String title, String authors, String genres, String description) {
-        ;
         BookCriteria.CriteriaBuilder bookCriteria = BookCriteria.builder();
         if (StringUtils.isNotBlank(title)) {
             bookCriteria.title(title);
@@ -66,7 +75,17 @@ public enum FindBook implements Command {
         return bookCriteria.build();
     }
 
+    private List<BookDto> createListOfAvailableBooks(List<BookDto> books) {
+        for (BookDto book : books) {
+            List<BorrowDto> borrows = borrowService.findBorrowsOfBook(book.getId()).stream()
+                    .filter(borrow -> borrow.getReturnDate() == null)
+                    .collect(Collectors.toList());
+            book.setTotalAmount(book.getTotalAmount() - borrows.size());
+        }
+        return books;
+    }
+
     private List<String> parseStringIntoStringList(String set) {
-        return Collections.singletonList(set);
+        return Arrays.stream(set.split(" ")).distinct().filter(StringUtils::isNotEmpty).collect(Collectors.toList());
     }
 }

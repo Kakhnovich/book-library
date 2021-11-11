@@ -19,6 +19,13 @@ public interface RequestContext {
     void setAttribute(String name, Object obj);
 
     /**
+     * method reset request parameter
+     *
+     * @param name name of parameter
+     */
+    void resetParameter(String name);
+
+    /**
      * method remove session attribute
      *
      * @param name attribute name

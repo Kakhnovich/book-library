@@ -32,6 +32,11 @@ public class WrappingRequestContext implements RequestContext {
     }
 
     @Override
+    public void resetParameter(String name) {
+        request.setAttribute(name, request.getParameter(name));
+    }
+
+    @Override
     public Object getParameter(String name) {
         return request.getParameter(name);
     }

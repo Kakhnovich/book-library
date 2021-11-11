@@ -4,13 +4,19 @@ import com.itechart.studets_lab.book_library.dao.impl.BookDao;
 import com.itechart.studets_lab.book_library.dao.impl.BookDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.BorrowDao;
 import com.itechart.studets_lab.book_library.dao.impl.BorrowDaoFactory;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowPeriodDao;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowPeriodDaoFactory;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowStatusDao;
+import com.itechart.studets_lab.book_library.dao.impl.BorrowStatusDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.ReaderDao;
 import com.itechart.studets_lab.book_library.dao.impl.ReaderDaoFactory;
 import com.itechart.studets_lab.book_library.model.Book;
 import com.itechart.studets_lab.book_library.model.Borrow;
 import com.itechart.studets_lab.book_library.model.BorrowDto;
+import com.itechart.studets_lab.book_library.model.BorrowFactory;
 import com.itechart.studets_lab.book_library.service.BorrowService;
-import com.itechart.studets_lab.book_library.service.CommonService;
+import com.itechart.studets_lab.book_library.service.ReaderService;
+import com.itechart.studets_lab.book_library.service.parser.BorrowParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +25,21 @@ import java.util.stream.Collectors;
 
 public class BorrowServiceImpl implements BorrowService {
     private static final BorrowServiceImpl INSTANCE = new BorrowServiceImpl();
+    private final ReaderService readerService = ReaderServiceImpl.getInstance();
+    private final BorrowParser borrowParser = BorrowParser.getInstance();
     private final BorrowDao borrowDao;
+    private final BorrowPeriodDao borrowPeriodDao;
+    private final BorrowStatusDao borrowStatusDao;
     private final ReaderDao readerDao;
     private final BookDao bookDao;
 
     private BorrowServiceImpl() {
         BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
         borrowDao = borrowDaoFactory.getDao();
+        BorrowPeriodDaoFactory borrowPeriodDaoFactory = BorrowPeriodDaoFactory.getInstance();
+        borrowPeriodDao = borrowPeriodDaoFactory.getDao();
+        BorrowStatusDaoFactory borrowStatusDaoFactory = BorrowStatusDaoFactory.getInstance();
+        borrowStatusDao = borrowStatusDaoFactory.getDao();
         ReaderDaoFactory readerDaoFactory = ReaderDaoFactory.getInstance();
         readerDao = readerDaoFactory.getDao();
         BookDaoFactory bookDaoFactory = BookDaoFactory.getInstance();
@@ -60,19 +74,51 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     @Override
-    public BorrowDto create(Borrow borrow) {
-        Optional<Book> book = bookDao.findByKey(borrow.getBookId());
+    public BorrowDto create(BorrowDto borrowDto) {
+        Optional<Book> book = bookDao.findByKey(borrowDto.getBookId());
         if (book.isPresent()) {
-            Optional<Borrow> newBorrow = borrowDao.create(borrow, book.get().getTotalAmount());
-            return newBorrow.map(this::convertToDto).orElse(null);
+            int periodId = borrowPeriodDao.findTimePeriodId(borrowDto.getDuration());
+            int statusId = borrowStatusDao.findStatusId(borrowDto.getStatus());
+            Borrow newBorrow = BorrowFactory.getInstance().create(borrowDto, periodId, statusId);
+            if(!borrowDao.create(newBorrow, book.get().getTotalAmount()).isPresent()){
+                return null;
+            }
+            return borrowDto;
         }
         return null;
     }
 
     @Override
-    public BorrowDto update(Borrow borrow) {
-        Optional<Borrow> newBorrow = borrowDao.update(borrow);
-        return newBorrow.map(this::convertToDto).orElse(null);
+    public BorrowDto update(BorrowDto borrowDto) {
+        if (borrowDto.getId() == 0) {
+            return create(borrowDto);
+        }
+        int periodId = borrowPeriodDao.findTimePeriodId(borrowDto.getDuration());
+        int statusId = borrowStatusDao.findStatusId(borrowDto.getStatus());
+        Borrow newBorrow = BorrowFactory.getInstance().create(borrowDto, periodId, statusId);
+        if(!borrowDao.update(newBorrow).isPresent()){
+            return null;
+        }
+        return borrowDto;
+    }
+
+    @Override
+    public List<BorrowDto> updateBorrowList(String borrowsData) {
+        boolean wasError = false;
+        if (!borrowsData.equals("null") && !borrowsData.equals("")) {
+            List<BorrowDto> borrows = borrowParser.parseString(borrowsData);
+            for (BorrowDto borrowDto : borrows) {
+                if (update(borrowDto) == null) {
+                    wasError = true;
+                }
+                readerService.update(borrowDto.getReader());
+            }
+            if (wasError) {
+                return new ArrayList<>();
+            }
+            return borrows;
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -82,7 +128,9 @@ public class BorrowServiceImpl implements BorrowService {
 
     @Override
     public List<BorrowDto> findBorrowsOfBook(int id) {
-        return findAll().stream().filter(borrow -> borrow.getBookId() == id).collect(Collectors.toList());
+        return findAll().stream()
+                .filter(borrow -> borrow.getBookId() == id)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -92,12 +140,12 @@ public class BorrowServiceImpl implements BorrowService {
 
     @Override
     public List<Integer> findAllPeriods() {
-        return borrowDao.findAllPeriods().orElse(new ArrayList<>());
+        return borrowPeriodDao.findAllPeriods().orElse(new ArrayList<>());
     }
 
     @Override
     public List<String> findAllStatuses() {
-        return borrowDao.findAllStatuses().orElse(new ArrayList<>());
+        return borrowStatusDao.findAllStatuses().orElse(new ArrayList<>());
     }
 
     private BorrowDto convertToDto(Borrow borrow) {
@@ -106,14 +154,9 @@ public class BorrowServiceImpl implements BorrowService {
                 borrow.getBookId(),
                 readerDao.findByKey(borrow.getReaderId()).get(),
                 borrow.getBorrowDate(),
-                borrow.getDuration(),
+                borrowPeriodDao.findPeriod(borrow.getDurationId()),
                 borrow.getReturnDate(),
                 borrow.getComment(),
-                borrow.getStatus());
-    }
-
-    @Override
-    public void deleteBorrowOfBook(int bookId) {
-        borrowDao.deleteByBookId(bookId);
+                borrowStatusDao.findStatus(borrow.getStatusId()));
     }
 }

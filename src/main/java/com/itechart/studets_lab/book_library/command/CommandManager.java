@@ -1,6 +1,5 @@
 package com.itechart.studets_lab.book_library.command;
 
-
 import com.itechart.studets_lab.book_library.command.edit_data.RemoveBook;
 import com.itechart.studets_lab.book_library.command.edit_data.SetBookData;
 import com.itechart.studets_lab.book_library.command.page.RedirectIndexPage;

@@ -1,31 +1,26 @@
 package com.itechart.studets_lab.book_library.model;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 public class Book {
     private final int id;
     private final int isbn;
-    private String coverLink;
+    private final String coverLink;
     private final String title;
-    private final List<String> authors;
     private final String publisher;
     private final LocalDate publishDate;
-    private final List<String> genres;
     private final int pageCount;
     private final String description;
-    private int totalAmount;
+    private final int totalAmount;
 
-    Book(int id, int isbn, String coverLink, String title, List<String> authors, String publisher, LocalDate publishDate, List<String> genres, int pageCount, String description, int totalAmount) {
+    Book(int id, int isbn, String coverLink, String title, String publisher, LocalDate publishDate, int pageCount, String description, int totalAmount) {
         this.id = id;
         this.isbn = isbn;
         this.coverLink = coverLink;
         this.title = title;
-        this.authors = authors;
         this.publisher = publisher;
         this.publishDate = publishDate;
-        this.genres = genres;
         this.pageCount = pageCount;
         this.description = description;
         this.totalAmount = totalAmount;
@@ -36,10 +31,8 @@ public class Book {
         private int isbn;
         private String coverLink;
         private String title;
-        private List<String> authors;
         private String publisher;
         private LocalDate publishDate;
-        private List<String> genres;
         private int pageCount;
         private String description;
         private int totalAmount;
@@ -64,11 +57,6 @@ public class Book {
             return this;
         }
 
-        public BookBuilder authors(List<String> authors) {
-            this.authors = authors;
-            return this;
-        }
-
         public BookBuilder publisher(String publisher) {
             this.publisher = publisher;
             return this;
@@ -76,11 +64,6 @@ public class Book {
 
         public BookBuilder publishDate(LocalDate publishDate) {
             this.publishDate = publishDate;
-            return this;
-        }
-
-        public BookBuilder genres(List<String> genres) {
-            this.genres = genres;
             return this;
         }
 
@@ -105,9 +88,9 @@ public class Book {
                     this.isbn,
                     this.coverLink,
                     this.title,
-                    this.authors, this.publisher,
+                    this.publisher,
                     this.publishDate,
-                    this.genres, this.pageCount,
+                    this.pageCount,
                     this.description,
                     this.totalAmount);
         }
@@ -129,17 +112,10 @@ public class Book {
         return coverLink;
     }
 
-    public void setCoverLink(String coverLink) {
-        this.coverLink = coverLink;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public List<String> getAuthors() {
-        return authors;
-    }
 
     public String getPublisher() {
         return publisher;
@@ -147,10 +123,6 @@ public class Book {
 
     public LocalDate getPublishDate() {
         return publishDate;
-    }
-
-    public List<String> getGenres() {
-        return genres;
     }
 
     public int getPageCount() {
@@ -165,20 +137,16 @@ public class Book {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && isbn == book.isbn && pageCount == book.pageCount && totalAmount == book.totalAmount && Objects.equals(coverLink, book.coverLink) && Objects.equals(title, book.title) && Objects.equals(authors, book.authors) && Objects.equals(publisher, book.publisher) && Objects.equals(publishDate, book.publishDate) && Objects.equals(genres, book.genres) && Objects.equals(description, book.description);
+        return id == book.id && isbn == book.isbn && pageCount == book.pageCount && totalAmount == book.totalAmount && Objects.equals(coverLink, book.coverLink) && Objects.equals(title, book.title) && Objects.equals(publisher, book.publisher) && Objects.equals(publishDate, book.publishDate) && Objects.equals(description, book.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isbn, coverLink, title, authors, publisher, publishDate, genres, pageCount, description, totalAmount);
+        return Objects.hash(id, isbn, coverLink, title, publisher, publishDate, pageCount, description, totalAmount);
     }
 }
