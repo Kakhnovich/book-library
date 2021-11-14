@@ -41,6 +41,7 @@
     <jsp:include page="pagination.jsp"/>
     <jsp:include page="readerModalWindow.jsp"/>
     <button onclick="showNewModal()">Add reader</button>
+    <div class="error"><p>${errorMsg}</p></div>
 </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ import com.itechart.studets_lab.book_library.model.Reader;
 import com.itechart.studets_lab.book_library.model.ReaderFactory;
 import com.itechart.studets_lab.book_library.service.ReaderService;
 import com.itechart.studets_lab.book_library.service.impl.ReaderServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 
 public enum SetReaderData implements Command {
     INSTANCE;
@@ -24,13 +25,17 @@ public enum SetReaderData implements Command {
 
     @Override
     public ResponseContext execute(RequestContext request) {
-        int id = Integer.parseInt(String.valueOf(request.getParameter(ID_ATTRIBUTE_NAME)));
+        int id = 0;
+        String readerId = String.valueOf(request.getParameter(ID_ATTRIBUTE_NAME));
+        if (StringUtils.isNumeric(readerId)) {
+            id = Integer.parseInt(readerId);
+        }
         String firstName = String.valueOf(request.getParameter(FIRST_NAME_ATTRIBUTE_NAME)).trim();
         String lastName = String.valueOf(request.getParameter(LAST_NAME_ATTRIBUTE_NAME)).trim();
         String email = String.valueOf(request.getParameter(EMAIL_ATTRIBUTE_NAME)).trim();
         String gender = String.valueOf(request.getParameter(GENDER_ATTRIBUTE_NAME));
         String phone = String.valueOf(request.getParameter(PHONE_NUMBER_ATTRIBUTE_NAME));
-        int phoneNumber = phone.equals("null") ? 0 : Integer.parseInt(phone);
+        int phoneNumber = (phone.equals("null") || phone.length()>9) ? 0 : Math.abs(Integer.parseInt(phone));
         Reader reader = ReaderFactory.getInstance().create(id, email, firstName, lastName, gender, phoneNumber);
         if (readerService.update(reader) == null) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);

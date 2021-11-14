@@ -17,7 +17,7 @@
             <p>Last Name - <input id="lastName" required name="lastName"></p>
             <p>Email - <input id="email" type="email" required name="email"></p>
             <p>Gender: <input id="male" type="radio" name="gender" required value="male"> male <input id="female" type="radio" name="gender" required value="female"> female</p>
-            <p>Phone number: <input id="phoneNumber" type="number" name="phone"></p>
+            <p>Phone number: <input id="phoneNumber" type="number" min="0" max="100_000_000" name="phone"></p>
             <input type="submit" value="Save">
             </form>
             <button onclick="closeModal()">Discard</button>
