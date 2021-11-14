@@ -30,10 +30,10 @@ public class BookServiceImpl implements BookService {
     private static final BookServiceImpl INSTANCE = new BookServiceImpl();
     private static final ConnectionPool POOL = ConnectionPool.getInstance();
     private static final Logger LOGGER = LogManager.getLogger(BookServiceImpl.class);
-    private final BookDao bookDao;
-    private final BookAuthorDao bookAuthorDao;
-    private final BookGenresDao bookGenresDao;
-    private final BorrowDao borrowDao;
+    private BookDao bookDao;
+    private BookAuthorDao bookAuthorDao;
+    private BookGenresDao bookGenresDao;
+    private BorrowDao borrowDao;
 
     private BookServiceImpl() {
         BookDaoFactory bookDaoFactory = BookDaoFactory.getInstance();
@@ -44,6 +44,22 @@ public class BookServiceImpl implements BookService {
         bookGenresDao = bookGenresDaoFactory.getDao();
         BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
         borrowDao = borrowDaoFactory.getDao();
+    }
+
+    public void setBookDao(BookDao bookDao) {
+        this.bookDao = bookDao;
+    }
+
+    public void setBookAuthorDao(BookAuthorDao bookAuthorDao) {
+        this.bookAuthorDao = bookAuthorDao;
+    }
+
+    public void setBookGenresDao(BookGenresDao bookGenresDao) {
+        this.bookGenresDao = bookGenresDao;
+    }
+
+    public void setBorrowDao(BorrowDao borrowDao) {
+        this.borrowDao = borrowDao;
     }
 
     public static BookServiceImpl getInstance() {
@@ -92,6 +108,7 @@ public class BookServiceImpl implements BookService {
                     throw new TransactionException("Can't find new book");
                 }
                 if (!addBookGenresAndAuthors(statement, createdBook.getId(), bookDto)) {
+                    createdBook = null;
                     throw new TransactionException("Can't add book genres and authors");
                 }
                 conn.commit();
@@ -109,7 +126,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(BookDto bookDto) {
-        if (bookDto.getId()==0) {
+        if (bookDto.getId() == 0) {
             return create(bookDto);
         }
         BookDto updatedBook = null;
@@ -118,7 +135,7 @@ public class BookServiceImpl implements BookService {
             conn.setAutoCommit(false);
             Savepoint savepoint = conn.setSavepoint("savepoint");
             try {
-                if (!deleteBookGenresAndAuthors(statement, bookDto) ||
+                if (!deleteBookGenresAndAuthors(statement, bookDto.getId()) ||
                         !addBookGenresAndAuthors(statement, bookDto.getId(), bookDto)) {
                     throw new TransactionException("Can't update book genres and authors");
                 }
@@ -140,9 +157,9 @@ public class BookServiceImpl implements BookService {
         return updatedBook;
     }
 
-    private boolean deleteBookGenresAndAuthors(Statement statement, BookDto bookDto) {
-        return bookGenresDao.deleteBookGenres(statement, bookDto.getId()) &&
-                bookAuthorDao.deleteBookAuthors(statement, bookDto.getId());
+    private boolean deleteBookGenresAndAuthors(Statement statement, int id) {
+        return bookGenresDao.deleteBookGenres(statement, id) &&
+                bookAuthorDao.deleteBookAuthors(statement, id);
     }
 
     private boolean addBookGenresAndAuthors(Statement statement, int bookId, BookDto bookDto) {
@@ -176,8 +193,9 @@ public class BookServiceImpl implements BookService {
             conn.setAutoCommit(false);
             Savepoint savepoint = conn.setSavepoint("savepoint");
             try {
-                if (!bookGenresDao.deleteBookGenres(statement, id) || !bookAuthorDao.deleteBookAuthors(statement, id) ||
-                        !borrowDao.deleteByBookId(statement, id) || !bookDao.delete(statement, id)) {
+                if (!deleteBookGenresAndAuthors(statement, id) ||
+                        !borrowDao.deleteByBookId(statement, id) ||
+                        !bookDao.delete(statement, id)) {
                     throw new TransactionException("Can't delete book");
                 }
                 conn.commit();

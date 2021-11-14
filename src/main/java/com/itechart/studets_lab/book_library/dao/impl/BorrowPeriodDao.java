@@ -37,7 +37,7 @@ public class BorrowPeriodDao {
         }
     }
 
-    public int findPeriod(int id){
+    public int findPeriod(int id) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(FIND_BORROW_PERIOD_SQL + id)) {

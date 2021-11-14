@@ -24,8 +24,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -34,11 +38,13 @@ import java.util.Properties;
 public class GmailSender implements Job {
     private static final Logger LOGGER = LogManager.getLogger(GmailSender.class);
     private static final String PROPS_FILE_NAME = "gmail.properties";
+    private static final String LIBRARY_NAME_PROPERTY = "library.name";
+    private static final String LIBRARY_SIGNATURE_PROPERTY = "library.signature";
+    private static final String LIBRARY_ADDRESS_PROPERTY = "library.address";
     private static final String USER_NAME_PROPERTY = "gmail.username";
     private static final String PASSWORD_PROPERTY = "gmail.password";
-    private static final String MAIL_SUBJECT_PROPERTY = "gmail.mail.subject";
     private static final String BILL_NOTIFICATION_PROPERTY = "gmail.mail.message.billNotification";
-    private static final String NOTIFICATION_PROPERTY ="gmail.mail.message.notification";
+    private static final String NOTIFICATION_PROPERTY = "gmail.mail.message.notification";
     private static final String MESSAGE_READER_FIRST_NAME_ATTRIBUTE_NAME = "firstName";
     private static final String MESSAGE_READER_LAST_NAME_ATTRIBUTE_NAME = "lastName";
     private static final String MESSAGE_BORROW_DATE_ATTRIBUTE_NAME = "borrowDate";
@@ -49,6 +55,8 @@ public class GmailSender implements Job {
     private static final String MESSAGE_BOOK_PAGE_COUNT_ATTRIBUTE_NAME = "pageCount";
     private static final String MESSAGE_BORROW_DURATION_ATTRIBUTE_NAME = "duration";
     private static final String MESSAGE_BORROW_LEFT_TIME_ATTRIBUTE_NAME = "leftTime";
+    private static final String MESSAGE_LIBRARY_NAME_ATTRIBUTE_NAME = "libraryName";
+    private static final String MESSAGE_LIBRARY_ADDRESS_ATTRIBUTE_NAME = "libraryAddress";
     private static final char DELIMITER_CHAR = '$';
     private final Properties prop = new Properties();
     private final BorrowService borrowService = BorrowServiceImpl.getInstance();
@@ -60,7 +68,7 @@ public class GmailSender implements Job {
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
         prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", "25");
+        prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
     }
 
@@ -89,8 +97,11 @@ public class GmailSender implements Job {
             emailProperties.load(fileInputStream);
             username = emailProperties.getProperty(USER_NAME_PROPERTY);
             password = emailProperties.getProperty(PASSWORD_PROPERTY);
-            String mailSubject = emailProperties.getProperty(MAIL_SUBJECT_PROPERTY);
-            ST mailMessage = addMailMessageAttributes(emailProperties, borrow, book);
+            String name = emailProperties.getProperty(LIBRARY_NAME_PROPERTY);
+            String signature = emailProperties.getProperty(LIBRARY_SIGNATURE_PROPERTY);
+            String address = emailProperties.getProperty(LIBRARY_ADDRESS_PROPERTY);
+            String mailSubject = signature + " Notification";
+            ST mailMessage = addMailMessageAttributes(emailProperties, borrow, book, name, address);
             Session session = Session.getInstance(prop, new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -109,7 +120,7 @@ public class GmailSender implements Job {
         }
     }
 
-    private ST addMailMessageAttributes(Properties emailProperties, BorrowDto borrow, BookDto book){
+    private ST addMailMessageAttributes(Properties emailProperties, BorrowDto borrow, BookDto book, String libraryName, String libraryAddress) {
         ST mailMessage;
         if (borrow.getBorrowDate().plusMonths(borrow.getDuration()).isBefore(LocalDate.now())) {
             mailMessage = new ST(emailProperties.getProperty(BILL_NOTIFICATION_PROPERTY), DELIMITER_CHAR, DELIMITER_CHAR);
@@ -126,6 +137,8 @@ public class GmailSender implements Job {
         mailMessage.add(MESSAGE_BOOK_PUBLISH_DATE_ATTRIBUTE_NAME, book.getPublishDate());
         mailMessage.add(MESSAGE_BOOK_PAGE_COUNT_ATTRIBUTE_NAME, book.getPageCount());
         mailMessage.add(MESSAGE_BORROW_DURATION_ATTRIBUTE_NAME, borrow.getDuration());
+        mailMessage.add(MESSAGE_LIBRARY_ADDRESS_ATTRIBUTE_NAME, libraryAddress);
+        mailMessage.add(MESSAGE_LIBRARY_NAME_ATTRIBUTE_NAME, libraryName);
         return mailMessage;
     }
 
@@ -145,6 +158,38 @@ public class GmailSender implements Job {
         multipart.addBodyPart(mimeBodyPart);
 
         message.setContent(multipart);
+    }
+
+    public void changeLibraryInfo(String libraryName, String librarySignature, String libraryAddress) {
+        String notification1 = "";
+        String notification2 = "";
+        try (InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream(PROPS_FILE_NAME)) {
+            Properties emailProperties = new Properties();
+            emailProperties.load(fileInputStream);
+            username = emailProperties.getProperty(USER_NAME_PROPERTY);
+            password = emailProperties.getProperty(PASSWORD_PROPERTY);
+            notification1 = emailProperties.getProperty(NOTIFICATION_PROPERTY);
+            notification2 = emailProperties.getProperty(BILL_NOTIFICATION_PROPERTY);
+        } catch (IOException e) {
+            LOGGER.error("IOException at opening email properties: " + e.getLocalizedMessage());
+        }
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(PROPS_FILE_NAME);
+        try {
+            File file = new File(resource.toURI().getPath());
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                Properties emailProperties = new Properties();
+                emailProperties.setProperty(LIBRARY_NAME_PROPERTY, libraryName);
+                emailProperties.setProperty(LIBRARY_SIGNATURE_PROPERTY, librarySignature);
+                emailProperties.setProperty(LIBRARY_ADDRESS_PROPERTY, libraryAddress);
+                emailProperties.setProperty(USER_NAME_PROPERTY, username);
+                emailProperties.setProperty(PASSWORD_PROPERTY, password);
+                emailProperties.setProperty(NOTIFICATION_PROPERTY, notification1);
+                emailProperties.setProperty(BILL_NOTIFICATION_PROPERTY, notification2);
+                emailProperties.store(outputStream, null);
+            }
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error("IOException at opening email properties: " + e.getLocalizedMessage());
+        }
     }
 
     private long getDaysLeft(LocalDate borrowDate, int duration) {

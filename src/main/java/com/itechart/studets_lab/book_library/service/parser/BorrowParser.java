@@ -17,9 +17,14 @@ public class BorrowParser {
     private static final BorrowParser INSTANCE = new BorrowParser();
     private static final String VARIABLES_SPLIT_REGEX = ";";
     private static final String BORROWS_SPLIT_REGEX = ",";
-    private final ReaderService readerService = ReaderServiceImpl.getInstance();
+    private ReaderService readerService;
 
     BorrowParser() {
+        readerService = ReaderServiceImpl.getInstance();
+    }
+
+    public void setReaderService(ReaderService readerService) {
+        this.readerService = readerService;
     }
 
     public static BorrowParser getInstance() {
@@ -40,8 +45,8 @@ public class BorrowParser {
         String firstName = StringUtils.substringBefore(dataList.get(3).trim(), " ");
         String lastName = StringUtils.substringAfter(dataList.get(3).trim(), " ");
         Reader reader = readerService.findReaderByEmail(email);
-        if(reader == null){
-            reader = readerService.create(ReaderFactory.getInstance().create(email, firstName, lastName));
+        if (reader == null) {
+            reader = readerService.create(ReaderFactory.getInstance().create(0, email, firstName, lastName, "", 0));
         }
         reader.setFirstName(firstName.trim());
         reader.setLastName(lastName.trim());

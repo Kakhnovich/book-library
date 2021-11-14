@@ -37,6 +37,5 @@
         </tbody>
     </table>
 </div>
-<jsp:include page="pagination.jsp"/>
 </body>
 </html>

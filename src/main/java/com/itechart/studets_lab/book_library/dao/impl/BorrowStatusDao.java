@@ -37,7 +37,7 @@ public class BorrowStatusDao {
         }
     }
 
-    public String findStatus(int id){
+    public String findStatus(int id) {
         try (final Connection conn = POOL.retrieveConnection();
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(FIND_BORROW_STATUS_SQL + id)) {

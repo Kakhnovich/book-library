@@ -2,6 +2,7 @@ package com.itechart.studets_lab.book_library.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class ReaderFactory {
     private static final ReaderFactory INSTANCE = new ReaderFactory();
@@ -32,11 +33,15 @@ public class ReaderFactory {
                 .build();
     }
 
-    public Reader create(String email, String firstName, String lastName) {
+    public Reader create(int id, String email, String firstName, String lastName, String gender, int phoneNumber) {
         return Reader.builder()
+                .id(id)
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
+                .gender(gender)
+                .phoneNumber(phoneNumber)
+                .dateOfRegistration(LocalDate.now())
                 .build();
     }
 }

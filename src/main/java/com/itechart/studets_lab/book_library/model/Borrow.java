@@ -69,7 +69,7 @@ public class Borrow {
             return this;
         }
 
-        public BorrowBuilder statusId(int statusId){
+        public BorrowBuilder statusId(int statusId) {
             this.statusId = statusId;
             return this;
         }
@@ -128,7 +128,7 @@ public class Borrow {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Borrow borrow = (Borrow) o;
-        return bookId == borrow.bookId && readerId == borrow.readerId && durationId == borrow.durationId && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && statusId==borrow.statusId;
+        return bookId == borrow.bookId && readerId == borrow.readerId && durationId == borrow.durationId && Objects.equals(borrowDate, borrow.borrowDate) && Objects.equals(returnDate, borrow.returnDate) && Objects.equals(comment, borrow.comment) && statusId == borrow.statusId;
     }
 
     @Override

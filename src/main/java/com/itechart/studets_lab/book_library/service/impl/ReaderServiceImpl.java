@@ -11,11 +11,15 @@ import java.util.Optional;
 
 public class ReaderServiceImpl implements ReaderService {
     private static final ReaderServiceImpl INSTANCE = new ReaderServiceImpl();
-    private final ReaderDao readerDao;
+    private ReaderDao readerDao;
 
     private ReaderServiceImpl() {
         ReaderDaoFactory readerDaoFactory = ReaderDaoFactory.getInstance();
         readerDao = readerDaoFactory.getDao();
+    }
+
+    public void setReaderDao(ReaderDao readerDao) {
+        this.readerDao = readerDao;
     }
 
     public static ReaderServiceImpl getInstance() {
@@ -46,6 +50,9 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public Reader update(Reader reader) {
+        if (reader.getId() == 0) {
+            return create(reader);
+        }
         return readerDao.update(reader).orElse(null);
     }
 

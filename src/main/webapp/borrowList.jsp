@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Borrow List</title>
-    <script src="js/modal.js"></script>
+    <script src="js/borrowModal.js"></script>
 </head>
 <body>
 <c:set var="rowNumber" value="0"/>

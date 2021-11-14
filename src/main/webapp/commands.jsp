@@ -22,11 +22,12 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+
                 <div class="nav-item">
                     <c:choose>
                         <c:when test="${command!='readers'}">
                             <a class="nav-link"
-                                                     href=${pageContext.request.contextPath}/controller?command=readers>Readers
+                               href=${pageContext.request.contextPath}/controller?command=readers>Readers
                                 Page</a>
                         </c:when>
                         <c:otherwise>
@@ -39,7 +40,7 @@
                     <c:choose>
                         <c:when test="${command!='search' && command!='find_book'}">
                             <a class="nav-link"
-                                                     href=${pageContext.request.contextPath}/controller?command=search>Search
+                               href=${pageContext.request.contextPath}/controller?command=search>Search
                                 Page</a>
                         </c:when>
                         <c:otherwise>
@@ -48,9 +49,17 @@
                     </c:choose>
                 </div>
 
-                <%--    <c:if test="${command!='info'}">--%>
-                <%--        <div class="nav-item"><a class="nav-link" href=${pageContext.request.contextPath}/controller?command=info>Information Page</a></div>--%>
-                <%--    </c:if>--%>
+                <div class="nav-item">
+                    <c:choose>
+                        <c:when test="${command!='info'}">
+                            <a class="nav-link"
+                               href=${pageContext.request.contextPath}/controller?command=info>Info Page</a>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="nav-link active">Info Page</div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
         </div>
     </div>

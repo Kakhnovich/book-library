@@ -18,8 +18,8 @@ public enum ShowMainPage implements Command {
     INSTANCE;
 
     private static final String BOOKS_PARAMETER_NAME = "books";
-    private static final String PAGE_PARAMETER_NAME = "page";
-    private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
+    private static final String PAGE_PARAMETER_NAME = "pageNumber";
+    private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "countOfPages";
     private static final String SORT_PARAMETER_NAME = "sort";
     private static final String SORT_PARAMETER_ACCEPT_VALUE = "accept";
     private final BookService bookService = BookServiceImpl.getInstance();

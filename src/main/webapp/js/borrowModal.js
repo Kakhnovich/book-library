@@ -1,5 +1,5 @@
 let form;
-let modal;
+let borrowModal;
 let statusField;
 let email;
 let dataList;
@@ -23,7 +23,7 @@ img.onerror = () => {
 
 window.onload = function () {
     form = document.getElementById('form');
-    modal = document.getElementById('myModal');
+    borrowModal = document.getElementById('myModal');
     statusField = document.getElementById('status');
     email = document.getElementById('email');
     dataList = email.list;
@@ -86,7 +86,7 @@ function showModal(rowNumber) {
     comment.value = borrows[rowNumber].comment;
     console.log("showModal()");
     statusField.style.display = 'block';
-    modal.style.display = "block";
+    borrowModal.style.display = "block";
 }
 
 function showNewModal() {
@@ -101,12 +101,12 @@ function showNewModal() {
     comment.value = '';
     console.log("showNewModal()");
     statusField.style.display = 'none';
-    modal.style.display = "block";
+    borrowModal.style.display = "block";
 }
 
 function closeModal() {
     console.log("closeModal()");
-    modal.style.display = "none";
+    borrowModal.style.display = "none";
 }
 
 function addTableRow() {

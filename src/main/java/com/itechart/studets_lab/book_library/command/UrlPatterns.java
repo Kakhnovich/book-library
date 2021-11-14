@@ -6,4 +6,5 @@ public class UrlPatterns {
     public static final String BOOK = "/bookPage.jsp";
     public static final String SEARCH = "/search.jsp";
     public static final String READERS = "/readers.jsp";
+    public static final String INFO = "/libraryInfo.jsp";
 }

@@ -27,8 +27,6 @@ public enum FindBook implements Command {
     private static final String AUTHORS_PARAMETER_NAME = "authors";
     private static final String GENRES_PARAMETER_NAME = "genres";
     private static final String DESCRIPTION_PARAMETER_NAME = "description";
-    private static final String PAGE_PARAMETER_NAME = "page";
-    private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
     private static final String ERROR_ATTRIBUTE_NAME = "errorMsg";
     private static final String ERROR_ATTRIBUTE_VALUE = "No any books for this criteria!";
     private final BookService bookService = BookServiceImpl.getInstance();
@@ -42,18 +40,11 @@ public enum FindBook implements Command {
         final String description = String.valueOf(request.getParameter(DESCRIPTION_PARAMETER_NAME)).trim();
         final BookCriteria bookCriteria = createCriteria(title, authors, genres, description);
         List<BookDto> books = bookService.findByCriteria(bookCriteria);
-        String page = String.valueOf(request.getParameter(PAGE_PARAMETER_NAME));
-        final int pageNumber = (page.equals("null")) ? 1 : Integer.parseInt(page);
-        request.setAttribute(PAGE_PARAMETER_NAME, pageNumber);
-        if (books.isEmpty()){
+
+        if (books.isEmpty()) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);
         } else {
-            request.setAttribute(COUNT_OF_PAGES_ATTRIBUTE_NAME, books.size() % 10 + 1);
-            List<BookDto> rezList = new ArrayList<>();
-            for (int i = 10 * (pageNumber - 1); i < 10 * pageNumber && i < books.size(); i++) {
-                rezList.add(books.get(i));
-            }
-            request.setAttribute(BOOKS_PARAMETER_NAME, createListOfAvailableBooks(rezList));
+            request.setAttribute(BOOKS_PARAMETER_NAME, createListOfAvailableBooks(books));
         }
         return ShowSearchPage.INSTANCE.execute(request);
     }

@@ -56,9 +56,9 @@ public class CreationBookFilter implements Filter {
                     genres.isEmpty() || genres.equals("null") ||
                     description.isEmpty() || description.equals("null") ||
                     publishDate.isEmpty() || publishDate.equals("null") || LocalDate.parse(publishDate, formatter).isAfter(LocalDate.now()) ||
-                    pageCount.equals("null") || Integer.parseInt(pageCount)<1 || Integer.parseInt(pageCount)>1000 ||
-                    isbn.equals("null") || Integer.parseInt(isbn)<1 || Integer.parseInt(isbn)>1_000_000_000 ||
-                    totalAmount.equals("null") || Integer.parseInt(totalAmount)<1 || Integer.parseInt(totalAmount)>100) {
+                    pageCount.equals("null") || Integer.parseInt(pageCount) < 1 || Integer.parseInt(pageCount) > 1000 ||
+                    isbn.equals("null") || Integer.parseInt(isbn) < 1 || Integer.parseInt(isbn) > 1_000_000_000 ||
+                    totalAmount.equals("null") || Integer.parseInt(totalAmount) < 1 || Integer.parseInt(totalAmount) > 100) {
                 final RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(ShowBookPage.INSTANCE.execute(WrappingRequestContext.of((HttpServletRequest) servletRequest)).getPage());
                 servletRequest.setAttribute(BOOK_ID_PARAMETER_NAME, servletRequest.getAttribute(BOOK_ID_PARAMETER_NAME));
                 servletRequest.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);

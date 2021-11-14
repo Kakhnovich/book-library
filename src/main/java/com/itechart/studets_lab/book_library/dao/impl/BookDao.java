@@ -102,7 +102,7 @@ public class BookDao implements CommonDao<Book> {
              final Statement statement = conn.createStatement();
              final ResultSet resultSet = statement.executeQuery(GET_COUNT_OF_BOOKS_SQL)) {
             if (resultSet.next()) {
-                return (int) Math.ceil(resultSet.getInt(COUNT_COLUMN_NAME));
+                return (resultSet.getInt(COUNT_COLUMN_NAME) + 9) / 10;
             }
         } catch (SQLException e) {
             LOGGER.error("SQLException while trying to get count of Book pages: " + e.getLocalizedMessage());

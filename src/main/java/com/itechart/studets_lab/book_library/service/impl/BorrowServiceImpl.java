@@ -25,13 +25,13 @@ import java.util.stream.Collectors;
 
 public class BorrowServiceImpl implements BorrowService {
     private static final BorrowServiceImpl INSTANCE = new BorrowServiceImpl();
-    private final ReaderService readerService = ReaderServiceImpl.getInstance();
-    private final BorrowParser borrowParser = BorrowParser.getInstance();
-    private final BorrowDao borrowDao;
-    private final BorrowPeriodDao borrowPeriodDao;
-    private final BorrowStatusDao borrowStatusDao;
-    private final ReaderDao readerDao;
-    private final BookDao bookDao;
+    private ReaderService readerService = ReaderServiceImpl.getInstance();
+    private BorrowParser borrowParser = BorrowParser.getInstance();
+    private BorrowDao borrowDao;
+    private BorrowPeriodDao borrowPeriodDao;
+    private BorrowStatusDao borrowStatusDao;
+    private ReaderDao readerDao;
+    private BookDao bookDao;
 
     private BorrowServiceImpl() {
         BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
@@ -48,6 +48,34 @@ public class BorrowServiceImpl implements BorrowService {
 
     public static BorrowServiceImpl getInstance() {
         return INSTANCE;
+    }
+
+    public void setReaderService(ReaderService readerService) {
+        this.readerService = readerService;
+    }
+
+    public void setBorrowParser(BorrowParser borrowParser) {
+        this.borrowParser = borrowParser;
+    }
+
+    public void setBorrowDao(BorrowDao borrowDao) {
+        this.borrowDao = borrowDao;
+    }
+
+    public void setBorrowPeriodDao(BorrowPeriodDao borrowPeriodDao) {
+        this.borrowPeriodDao = borrowPeriodDao;
+    }
+
+    public void setBorrowStatusDao(BorrowStatusDao borrowStatusDao) {
+        this.borrowStatusDao = borrowStatusDao;
+    }
+
+    public void setReaderDao(ReaderDao readerDao) {
+        this.readerDao = readerDao;
+    }
+
+    public void setBookDao(BookDao bookDao) {
+        this.bookDao = bookDao;
     }
 
     @Override
@@ -80,7 +108,7 @@ public class BorrowServiceImpl implements BorrowService {
             int periodId = borrowPeriodDao.findTimePeriodId(borrowDto.getDuration());
             int statusId = borrowStatusDao.findStatusId(borrowDto.getStatus());
             Borrow newBorrow = BorrowFactory.getInstance().create(borrowDto, periodId, statusId);
-            if(!borrowDao.create(newBorrow, book.get().getTotalAmount()).isPresent()){
+            if (!borrowDao.create(newBorrow, book.get().getTotalAmount()).isPresent()) {
                 return null;
             }
             return borrowDto;
@@ -96,7 +124,7 @@ public class BorrowServiceImpl implements BorrowService {
         int periodId = borrowPeriodDao.findTimePeriodId(borrowDto.getDuration());
         int statusId = borrowStatusDao.findStatusId(borrowDto.getStatus());
         Borrow newBorrow = BorrowFactory.getInstance().create(borrowDto, periodId, statusId);
-        if(!borrowDao.update(newBorrow).isPresent()){
+        if (!borrowDao.update(newBorrow).isPresent()) {
             return null;
         }
         return borrowDto;
@@ -110,6 +138,7 @@ public class BorrowServiceImpl implements BorrowService {
             for (BorrowDto borrowDto : borrows) {
                 if (update(borrowDto) == null) {
                     wasError = true;
+                    break;
                 }
                 readerService.update(borrowDto.getReader());
             }

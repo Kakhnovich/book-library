@@ -11,11 +11,11 @@ public enum ShowReadersPage implements Command {
     INSTANCE;
 
     private static final String READERS_ATTRIBUTE_NAME = "readers";
-    private static final String PAGE_PARAMETER_NAME = "page";
-    private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "count";
+    private static final String PAGE_PARAMETER_NAME = "pageNumber";
+    private static final String COUNT_OF_PAGES_ATTRIBUTE_NAME = "countOfPages";
     private final ReaderService readerService = ReaderServiceImpl.getInstance();
 
-    private static final ResponseContext READERS_PAGE_RESPONSE = new ResponseContext(UrlPatterns.READERS, false);
+    private static final ResponseContext READERS_PAGE_RESPONSE = new ResponseContext(UrlPatterns.READERS, true);
 
     public ShowReadersPage getInstance() {
         return INSTANCE;
