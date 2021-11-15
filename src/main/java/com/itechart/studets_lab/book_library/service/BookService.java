@@ -9,5 +9,9 @@ import java.util.List;
 public interface BookService extends CommonService<BookDto, Book> {
     List<BookDto> findByCriteria(BookCriteria bookCriteria);
 
+    List<String> findBookPhotos(int id);
+
+    boolean addBookPhoto(String photo, int id);
+
     void deleteBookWithId(int id);
 }

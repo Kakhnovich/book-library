@@ -31,6 +31,8 @@ public enum ShowBookPage implements Command {
     private static final String STATUS_ATTRIBUTE_NAME = "statuses";
     private static final String PERIODS_ATTRIBUTE_NAME = "periods";
     private static final String EMPTY_ATTRIBUTE_VALUE = "null";
+    private static final String PHOTOS_ATTRIBUTE_NAME = "photos";
+    private static final String ERROR_ATTRIBUTE_NAME = "errorMsg";
     private final BookService bookService = BookServiceImpl.getInstance();
     private final BorrowService borrowService = BorrowServiceImpl.getInstance();
     private final ReaderService readerService = ReaderServiceImpl.getInstance();
@@ -49,6 +51,7 @@ public enum ShowBookPage implements Command {
     }
 
     private void setRequestAttributes(RequestContext request, BookDto book) {
+        request.resetParameter(ERROR_ATTRIBUTE_NAME);
         request.setAttribute(BOOK_ATTRIBUTE_NAME, book);
         request.setAttribute(BOOK_AUTHORS_ATTRIBUTE_NAME, parseList(book.getAuthors()));
         request.setAttribute(BOOK_GENRES_ATTRIBUTE_NAME, parseList(book.getGenres()));
@@ -60,6 +63,7 @@ public enum ShowBookPage implements Command {
         } else {
             request.setAttribute(BOOK_AVAILABLE_COUNT_ATTRIBUTE_NAME, book.getTotalAmount());
         }
+        request.setAttribute(PHOTOS_ATTRIBUTE_NAME, bookService.findBookPhotos(book.getId()));
         request.setAttribute(EMAILS_MAP_ATTRIBUTE_NAME, readerService.findEmailsWithNames());
         request.setAttribute(PERIODS_ATTRIBUTE_NAME, borrowService.findAllPeriods());
         request.setAttribute(STATUS_ATTRIBUTE_NAME, borrowService.findAllStatuses());

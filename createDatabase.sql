@@ -24,6 +24,19 @@ create unique index book_isbn_uindex
 create unique index book_title_uindex
     on book (title);
 
+create table book_gallery
+(
+    id int auto_increment,
+    book_id int not null,
+    photo varchar(100) not null,
+    constraint book_gallery_pk
+        primary key (id)
+);
+
+alter table book_gallery
+    add constraint book_gallery_book_id_fk
+        foreign key (book_id) references book (id);
+
 create table borrow_record
 (
     book_id int not null,

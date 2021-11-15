@@ -10,6 +10,12 @@ let comment;
 let tableDiv;
 let tableRef;
 let borrows = [];
+let photos = [];
+let photoNumber = 0;
+let prevButton;
+let nextButton;
+let addPhotoButton;
+let hasCover = true;
 let bookId;
 let borrowId;
 let actualRow = 0;
@@ -19,6 +25,7 @@ let addButton;
 let img = document.getElementsByTagName('img')[0];
 img.onerror = () => {
     img.src = '/img/default.jpg';
+    hasCover = false;
 }
 
 window.onload = function () {
@@ -42,6 +49,21 @@ window.onload = function () {
     tableRef = document.getElementsByClassName("table")[0];
     for (let row of tableRef.lastElementChild.rows) {
         addBorrow(row);
+    }
+    prevButton = document.getElementById("previousButton");
+    prevButton.disabled = true;
+    nextButton = document.getElementById("nextButton");
+    addPhotoButton = document.getElementById("addPhotoButton");
+    if (bookId===0 || !hasCover){
+        addPhotoButton.disabled = true;
+    }
+    let photoList = document.getElementById("photos");
+    photos.push(img.src);
+    for(let photo of photoList.options) {
+        photos.push("img/" + photo.value);
+    }
+    if(photos.length===1){
+        nextButton.disabled = true;
     }
     setMaxPublishDate();
 }
@@ -226,4 +248,26 @@ function setSearchList() {
     } else {
         dataList.id = "emails";
     }
+}
+
+function previousImage(){
+    nextButton.disabled = false;
+    photoNumber--;
+    if(photoNumber===0){
+        prevButton.disabled = true;
+    }
+    changeImage();
+}
+
+function nextImage(){
+    prevButton.disabled = false;
+    photoNumber++;
+    if(photoNumber===(photos.length-1)){
+        nextButton.disabled = true;
+    }
+    changeImage();
+}
+
+function changeImage(){
+    img.src=photos[photoNumber];
 }

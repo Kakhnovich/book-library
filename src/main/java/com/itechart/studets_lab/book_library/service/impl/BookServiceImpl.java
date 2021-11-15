@@ -4,6 +4,8 @@ import com.itechart.studets_lab.book_library.dao.impl.BookAuthorDao;
 import com.itechart.studets_lab.book_library.dao.impl.BookAuthorDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.BookDao;
 import com.itechart.studets_lab.book_library.dao.impl.BookDaoFactory;
+import com.itechart.studets_lab.book_library.dao.impl.BookGalleryDao;
+import com.itechart.studets_lab.book_library.dao.impl.BookGalleryDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.BookGenresDao;
 import com.itechart.studets_lab.book_library.dao.impl.BookGenresDaoFactory;
 import com.itechart.studets_lab.book_library.dao.impl.BorrowDao;
@@ -34,6 +36,7 @@ public class BookServiceImpl implements BookService {
     private BookAuthorDao bookAuthorDao;
     private BookGenresDao bookGenresDao;
     private BorrowDao borrowDao;
+    private BookGalleryDao bookGalleryDao;
 
     private BookServiceImpl() {
         BookDaoFactory bookDaoFactory = BookDaoFactory.getInstance();
@@ -44,6 +47,8 @@ public class BookServiceImpl implements BookService {
         bookGenresDao = bookGenresDaoFactory.getDao();
         BorrowDaoFactory borrowDaoFactory = BorrowDaoFactory.getInstance();
         borrowDao = borrowDaoFactory.getDao();
+        BookGalleryDaoFactory bookGalleryDaoFactory = BookGalleryDaoFactory.getInstance();
+        bookGalleryDao = bookGalleryDaoFactory.getDao();
     }
 
     public void setBookDao(BookDao bookDao) {
@@ -208,6 +213,16 @@ public class BookServiceImpl implements BookService {
         } catch (SQLException e) {
             LOGGER.error("SQLException while trying to get Connection: " + e.getLocalizedMessage());
         }
+    }
+
+    @Override
+    public List<String> findBookPhotos(int id) {
+        return bookGalleryDao.getBookGallery(id);
+    }
+
+    @Override
+    public boolean addBookPhoto(String photo, int id) {
+        return bookGalleryDao.addBookPhoto(photo, id);
     }
 
     private BookDto convertToDto(Book book) {

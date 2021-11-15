@@ -8,30 +8,32 @@
     <title>Pagination</title>
 </head>
 <body>
-<div class="blog-pagination">
-    <c:if test="${pageNumber > 1}">
-        <c:if test="${pageNumber > 2}">
-            <a class="btn btn-outline-primary"
-               href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=1"> 1 </a>
-            <c:if test="${pageNumber > 3}">
-                ...
-            </c:if>
-        </c:if>
-        <a class="btn btn-outline-primary"
-           href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${pageNumber-1}"> ${pageNumber-1} </a>
-    </c:if>
-    <div class="btn btn-outline-secondary disabled">${pageNumber}</div>
-    <c:if test="${countOfPages > pageNumber}">
-        <a class="btn btn-outline-primary"
-           href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${pageNumber+1}"> ${pageNumber+1} </a>
-        <c:if test="${countOfPages > pageNumber + 1}">
-            <c:if test="${countOfPages > pageNumber + 2}">
-                ...
+<div class="isolated">
+    <div class="blog-pagination">
+        <c:if test="${pageNumber > 1}">
+            <c:if test="${pageNumber > 2}">
+                <a class="btn btn-outline-primary"
+                   href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=1"> 1 </a>
+                <c:if test="${pageNumber > 3}">
+                    ...
+                </c:if>
             </c:if>
             <a class="btn btn-outline-primary"
-               href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${countOfPages}"> ${countOfPages} </a>
+               href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${pageNumber-1}"> ${pageNumber-1} </a>
         </c:if>
-    </c:if>
+        <div class="btn btn-outline-secondary disabled">${pageNumber}</div>
+        <c:if test="${countOfPages > pageNumber}">
+            <a class="btn btn-outline-primary"
+               href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${pageNumber+1}"> ${pageNumber+1} </a>
+            <c:if test="${countOfPages > pageNumber + 1}">
+                <c:if test="${countOfPages > pageNumber + 2}">
+                    ...
+                </c:if>
+                <a class="btn btn-outline-primary"
+                   href="${pageContext.request.contextPath}/controller?command=${command}&pageNumber=${countOfPages}"> ${countOfPages} </a>
+            </c:if>
+        </c:if>
+    </div>
 </div>
 </body>
 </html>
