@@ -35,7 +35,7 @@ public enum SetReaderData implements Command {
         String email = String.valueOf(request.getParameter(EMAIL_ATTRIBUTE_NAME)).trim();
         String gender = String.valueOf(request.getParameter(GENDER_ATTRIBUTE_NAME));
         String phone = String.valueOf(request.getParameter(PHONE_NUMBER_ATTRIBUTE_NAME));
-        int phoneNumber = (phone.equals("null") || phone.length()>9) ? 0 : Math.abs(Integer.parseInt(phone));
+        int phoneNumber = (phone.equals("null") || phone.isEmpty() || phone.length()>9) ? 0 : Math.abs(Integer.parseInt(phone));
         Reader reader = ReaderFactory.getInstance().create(id, email, firstName, lastName, gender, phoneNumber);
         if (readerService.update(reader) == null) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, ERROR_ATTRIBUTE_VALUE);

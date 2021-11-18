@@ -42,7 +42,7 @@ public enum ShowBookPage implements Command {
     @Override
     public ResponseContext execute(RequestContext request) {
         String id = String.valueOf(request.getParameter(ID_PARAMETER_NAME));
-        final int bookId = (EMPTY_ATTRIBUTE_VALUE.equals(id)) ? 0 : Integer.parseInt(id);
+        final int bookId = (EMPTY_ATTRIBUTE_VALUE.equals(id) || id.isEmpty()) ? 0 : Integer.parseInt(id);
         BookDto book = bookService.findByKey(bookId);
         if (book != null) {
             setRequestAttributes(request, book);

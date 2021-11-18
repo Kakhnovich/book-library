@@ -51,7 +51,7 @@ public enum SetBookData implements Command {
             return ShowBookPage.INSTANCE.execute(request);
         }
         String borrowsData = String.valueOf(request.getParameter(BORROWS_PARAMETER_NAME));
-        if (borrowService.updateBorrowList(borrowsData).isEmpty()) {
+        if (!borrowsData.equals("null") && borrowService.updateBorrowList(borrowsData).isEmpty()) {
             request.setAttribute(BORROWS_ERROR_ATTRIBUTE_NAME, BORROWS_ERROR_ATTRIBUTE_VALUE);
             request.setAttribute(BOOK_ID_PARAMETER_NAME, book.getId());
             return ShowBookPage.INSTANCE.execute(request);
